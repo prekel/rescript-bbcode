@@ -177,3 +177,11 @@ thumb
 sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/node,react,ocaml
+
+
+# https://github.com/rescript-lang/rescript-project-template/blob/master/.gitignore
+.DS_Store
+/node_modules/
+/lib/
+.bsb.lock
+.merlin

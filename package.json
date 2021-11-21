@@ -1,0 +1,25 @@
+{
+  "name": "rescript-bbcode",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "re:build": "rescript",
+    "re:start": "rescript build -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "tbd"
+  },
+  "keywords": [
+    "bbcode"
+  ],
+  "author": "Vladislav Prekel",
+  "license": "MIT",
+  "devDependencies": {
+    "gentype": "^4.3.0",
+    "rescript": "^9.1.4"
+  }
+}

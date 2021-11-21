@@ -1,0 +1,7 @@
+*.ml linguist-language=OCaml
+*.mli linguist-language=OCaml
+
+* text eol=lf
+
+*.bs.js linguist-generated
+*.gen.tsx linguist-generated

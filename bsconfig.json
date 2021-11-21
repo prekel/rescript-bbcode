@@ -1,0 +1,27 @@
+{
+    "name": "rescript-bbcode",
+    "sources": [
+        {
+            "dir": "src",
+            "subdirs": true
+        }
+    ],
+    "package-specs": [
+        {
+            "module": "es6",
+            "in-source": true
+        }
+    ],
+    "suffix": ".bs.js",
+    "bs-dependencies": [],
+    "gentypeconfig": {
+        "language": "typescript",
+        "shims": {},
+        "generatedFileExtension": ".gen.tsx",
+        "module": "es6",
+        "debug": {
+            "all": false,
+            "basic": false
+        }
+    }
+}
