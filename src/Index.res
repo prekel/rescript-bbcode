@@ -3,36 +3,56 @@ let a = () => Js.Console.log("hello")
 
 a()
 
-type rec lexer_ast =
-  | LText({text: string, prev: lexer_ast})
-  | LLeftBracket({prev: lexer_ast})
-  | LRightBracket({prev: lexer_ast})
-  | LNil
+type lexer_ast_item =
+  | LText({text: string})
+  | LLeftBracket
+  | LRightBracket
 
 let lexing = s =>
   s
   ->Js.String2.castToArrayLike
   ->Js.Array2.from
-  ->Belt.Array.reduce(LNil, (st, el) =>
+  ->Belt.Array.reduce(list{}, (st, el) =>
     switch el {
-    | "[" => LLeftBracket({prev: st})
-    | "]" => LRightBracket({prev: st})
+    | "[" => list{LLeftBracket, ...st}
+    | "]" => list{LRightBracket, ...st}
     | other =>
       switch st {
-      | LText({text: txt, prev: nxt}) => LText({text: txt ++ other, prev: nxt})
-      | LLeftBracket(_) => LText({text: other, prev: st})
-      | LRightBracket(_) => LText({text: other, prev: st})
-      | LNil => LText({text: other, prev: st})
+      | list{LText({text}), ...tail} => list{LText({text: text ++ other}), ...tail}
+      | list{LLeftBracket, ..._} => list{LText({text: other}), ...st}
+      | list{LRightBracket, ..._} => list{LText({text: other}), ...st}
+      | list{} => list{LText({text: other})}
       }
     }
   )
 
-Js.Console.log(lexing("rstar[atrsaon[url]aorsinit[/url][]]rasta")->Js.Json.stringifyAny)
+Js.Console.log(
+  lexing("rstar[atrsaon[url]aorsinit[/url][]]rasta")->Belt.List.toArray->Belt.Array.reverse,
+)
 
-type rec parser_weak_ast =
-  | PText({text: string, next: parser_weak_ast})
-  | PBlock({inner: string, next: parser_weak_ast})
-  | PNil
+type rec parser_weak_ast_item =
+  | PText({text: string})
+  | PBlock({text: string, inner: string})
+
+type parse_state =
+  | OpenBracket(string)
+  | NotOpenBracket(string)
+
+let rec parsing_weak = (l, state, acc) =>
+  switch (l, state) {
+  | (list{LText({text}), ...nxt}, OpenBracket(curr)) =>
+    parsing_weak(nxt, OpenBracket(curr ++ text), acc)
+  | (list{LText({text}), ...nxt}, NotOpenBracket(curr)) =>
+    parsing_weak(nxt, NotOpenBracket(curr ++ text), acc)
+  | (list{LLeftBracket, ...nxt}, OpenBracket(curr)) =>
+    parsing_weak(nxt, OpenBracket(curr ++ "["), acc)
+  | (list{LLeftBracket, ...nxt}, NotOpenBracket(curr)) =>
+    parsing_weak(nxt, OpenBracket(curr ++ "["), acc)
+  | (list{LRightBracket, ...nxt}, OpenBracket(curr)) => assert false
+  | (list{LRightBracket, ...nxt}, NotOpenBracket(curr)) => assert false
+  | (list{}, OpenBracket(curr)) => assert false
+  | (list{}, NotOpenBracket(curr)) => assert false
+  }
 
 @genType
 type bb_item =

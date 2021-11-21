@@ -11,37 +11,133 @@ function a(param) {
 console.log("hello");
 
 function lexing(s) {
-  return Belt_Array.reduce(Array.from(s), /* LNil */0, (function (st, el) {
+  return Belt_Array.reduce(Array.from(s), /* [] */0, (function (st, el) {
                 switch (el) {
                   case "[" :
                       return {
-                              TAG: /* LLeftBracket */1,
-                              prev: st
+                              hd: /* LLeftBracket */0,
+                              tl: st
                             };
                   case "]" :
                       return {
-                              TAG: /* LRightBracket */2,
-                              prev: st
+                              hd: /* LRightBracket */1,
+                              tl: st
                             };
                   default:
-                    if (typeof st === "number" || st.TAG !== /* LText */0) {
+                    if (!st) {
                       return {
-                              TAG: /* LText */0,
-                              text: el,
-                              prev: st
+                              hd: /* LText */{
+                                text: el
+                              },
+                              tl: /* [] */0
+                            };
+                    }
+                    var match = st.hd;
+                    if (typeof match === "number") {
+                      return {
+                              hd: /* LText */{
+                                text: el
+                              },
+                              tl: st
                             };
                     } else {
                       return {
-                              TAG: /* LText */0,
-                              text: st.text + el,
-                              prev: st.prev
+                              hd: /* LText */{
+                                text: match.text + el
+                              },
+                              tl: st.tl
                             };
                     }
                 }
               }));
 }
 
-console.log(JSON.stringify(lexing("rstar[atrsaon[url]aorsinit[/url][]]rasta")));
+console.log(Belt_Array.reverse(Belt_List.toArray(lexing("rstar[atrsaon[url]aorsinit[/url][]]rasta"))));
+
+function parsing_weak(_l, _state, acc) {
+  while(true) {
+    var state = _state;
+    var l = _l;
+    if (l) {
+      var match = l.hd;
+      if (typeof match === "number") {
+        if (match !== 0) {
+          if (state.TAG === /* OpenBracket */0) {
+            throw {
+                  RE_EXN_ID: "Assert_failure",
+                  _1: [
+                    "Index.res",
+                    51,
+                    56
+                  ],
+                  Error: new Error()
+                };
+          }
+          throw {
+                RE_EXN_ID: "Assert_failure",
+                _1: [
+                  "Index.res",
+                  52,
+                  59
+                ],
+                Error: new Error()
+              };
+        }
+        var nxt = l.tl;
+        if (state.TAG === /* OpenBracket */0) {
+          _state = {
+            TAG: /* OpenBracket */0,
+            _0: state._0 + "["
+          };
+          _l = nxt;
+          continue ;
+        }
+        _state = {
+          TAG: /* OpenBracket */0,
+          _0: state._0 + "["
+        };
+        _l = nxt;
+        continue ;
+      }
+      var nxt$1 = l.tl;
+      var text = match.text;
+      if (state.TAG === /* OpenBracket */0) {
+        _state = {
+          TAG: /* OpenBracket */0,
+          _0: state._0 + text
+        };
+        _l = nxt$1;
+        continue ;
+      }
+      _state = {
+        TAG: /* NotOpenBracket */1,
+        _0: state._0 + text
+      };
+      _l = nxt$1;
+      continue ;
+    }
+    if (state.TAG === /* OpenBracket */0) {
+      throw {
+            RE_EXN_ID: "Assert_failure",
+            _1: [
+              "Index.res",
+              53,
+              35
+            ],
+            Error: new Error()
+          };
+    }
+    throw {
+          RE_EXN_ID: "Assert_failure",
+          _1: [
+            "Index.res",
+            54,
+            38
+          ],
+          Error: new Error()
+        };
+  };
+}
 
 var mapBBaux = Belt_List.map;
 
@@ -52,6 +148,7 @@ function mapBB(a, f) {
 export {
   a ,
   lexing ,
+  parsing_weak ,
   mapBBaux ,
   mapBB ,
   
