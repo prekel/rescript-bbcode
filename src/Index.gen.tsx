@@ -7,7 +7,7 @@ import * as Curry__Es6Import from 'rescript/lib/es6/curry.js';
 const Curry: any = Curry__Es6Import;
 
 // @ts-ignore: Implicit any on import
-import * as IndexBS__Es6Import from './Index.bs';
+import * as IndexBS__Es6Import from './Index.mjs';
 const IndexBS: any = IndexBS__Es6Import;
 
 // tslint:disable-next-line:interface-over-type-literal
