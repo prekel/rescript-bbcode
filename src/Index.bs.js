@@ -68,7 +68,7 @@ function parsing_weak(_l, _state, acc) {
                   _1: [
                     "Index.res",
                     51,
-                    56
+                    61
                   ],
                   Error: new Error()
                 };
@@ -87,14 +87,16 @@ function parsing_weak(_l, _state, acc) {
         if (state.TAG === /* OpenBracket */0) {
           _state = {
             TAG: /* OpenBracket */0,
-            _0: state._0 + "["
+            _0: state._0 + "[",
+            _1: ""
           };
           _l = nxt;
           continue ;
         }
         _state = {
           TAG: /* OpenBracket */0,
-          _0: state._0 + "["
+          _0: state._0 + "[",
+          _1: ""
         };
         _l = nxt;
         continue ;
@@ -104,7 +106,8 @@ function parsing_weak(_l, _state, acc) {
       if (state.TAG === /* OpenBracket */0) {
         _state = {
           TAG: /* OpenBracket */0,
-          _0: state._0 + text
+          _0: state._0 + text,
+          _1: ""
         };
         _l = nxt$1;
         continue ;
@@ -122,7 +125,7 @@ function parsing_weak(_l, _state, acc) {
             _1: [
               "Index.res",
               53,
-              35
+              40
             ],
             Error: new Error()
           };

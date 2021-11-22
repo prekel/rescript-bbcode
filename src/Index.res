@@ -35,22 +35,22 @@ type rec parser_weak_ast_item =
   | PBlock({text: string, inner: string})
 
 type parse_state =
-  | OpenBracket(string)
+  | OpenBracket(string, string)
   | NotOpenBracket(string)
 
 let rec parsing_weak = (l, state, acc) =>
   switch (l, state) {
-  | (list{LText({text}), ...nxt}, OpenBracket(curr)) =>
-    parsing_weak(nxt, OpenBracket(curr ++ text), acc)
+  | (list{LText({text}), ...nxt}, OpenBracket(curr, inn)) =>
+    parsing_weak(nxt, OpenBracket(curr ++ text, ""), acc)
   | (list{LText({text}), ...nxt}, NotOpenBracket(curr)) =>
     parsing_weak(nxt, NotOpenBracket(curr ++ text), acc)
-  | (list{LLeftBracket, ...nxt}, OpenBracket(curr)) =>
-    parsing_weak(nxt, OpenBracket(curr ++ "["), acc)
+  | (list{LLeftBracket, ...nxt}, OpenBracket(curr, inn)) =>
+    parsing_weak(nxt, OpenBracket(curr ++ "[", ""), acc)
   | (list{LLeftBracket, ...nxt}, NotOpenBracket(curr)) =>
-    parsing_weak(nxt, OpenBracket(curr ++ "["), acc)
-  | (list{LRightBracket, ...nxt}, OpenBracket(curr)) => assert false
+    parsing_weak(nxt, OpenBracket(curr ++ "[", ""), acc)
+  | (list{LRightBracket, ...nxt}, OpenBracket(curr, inn)) => assert false
   | (list{LRightBracket, ...nxt}, NotOpenBracket(curr)) => assert false
-  | (list{}, OpenBracket(curr)) => assert false
+  | (list{}, OpenBracket(curr, inn)) => assert false
   | (list{}, NotOpenBracket(curr)) => assert false
   }
 
