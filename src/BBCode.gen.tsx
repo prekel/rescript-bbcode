@@ -1,12 +1,15 @@
-/* TypeScript file generated from bbcode.ml by genType. */
+/* TypeScript file generated from BBCode.ml by genType. */
 /* eslint-disable import/first */
 
 
 // @ts-ignore: Implicit any on import
-import * as bbcodeBS__Es6Import from './bbcode.mjs';
-const bbcodeBS: any = bbcodeBS__Es6Import;
+import * as BBCodeBS__Es6Import from './BBCode.mjs';
+const BBCodeBS: any = BBCodeBS__Es6Import;
 
-import type {list} from './ReasonPervasives.gen';
+import type {List_t as Belt_List_t} from './Belt.gen';
+
+// tslint:disable-next-line:interface-over-type-literal
+export type list<a> = Belt_List_t<a>;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tag = {
@@ -61,7 +64,7 @@ export type table_cell =
     { readonly children: ast; readonly variant: "Heading" | "Content" };
 
 export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
-  const result = bbcodeBS.ast_to_array(Arg1);
+  const result = BBCodeBS.ast_to_array(Arg1);
   return result.map(function _element(ArrayItem: any) { return ArrayItem.TAG===0
     ? {tag:"Text", value:ArrayItem._0}
     : ArrayItem.TAG===1

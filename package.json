@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "tbd"
+    "url": "https://github.com/prekel/rescript-bbcode"
   },
   "keywords": [
     "bbcode"
@@ -23,6 +23,11 @@
     "gentype": "^4.3.0",
     "onchange": "^7.1.0",
     "pta": "^1.0.1",
+    "@types/react": "^17.0.38",
     "rescript": "^9.1.4"
+  },
+  "dependencies": {
+    "@rescript/react": "^0.10.3",
+    "react": "^17.0.2"
   }
 }

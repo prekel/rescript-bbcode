@@ -3,6 +3,7 @@ type tag =
   ; value : string option
   ; attrib : (string * string) list
   }
+[@@genType]
 
 type ast_item =
   | Text of string
@@ -123,7 +124,76 @@ module Parse = struct
     | { name = "color"; value = Some color; attrib = [] }
     | { name = "style"; value = None; attrib = [ ("color", color) ] } ->
       FontColor { children; color }
+    | { name = "center"; value = None; attrib = [] } -> CenterText { children }
+    | { name = "left"; value = None; attrib = [] } -> LeftAlignText { children }
+    | { name = "right"; value = None; attrib = [] } -> RightAlignText { children }
+    | { name = "quote"; value = None; attrib = [] } -> Quote { children }
+    | { name = "quote"; value = Some name; attrib = [] } ->
+      QuoteNamed { children; quote = name }
+    | { name = "spoiler"; value = None; attrib = [] } -> Spoiler { children }
+    | { name = "spoiler"; value = Some name; attrib = [] } ->
+      SpoilerNamed { children; spoiler = name }
+    | { name = "url"; value = None; attrib = [] } ->
+      (match children with
+      | [ Text url ] -> Link { url }
+      | _ -> failwith "Text must be inside url")
     | { name = "url"; value = Some url; attrib = [] } -> LinkNamed { children; url }
+    | { name = "img"; value = None; attrib = [] } ->
+      (match children with
+      | [ Text url ] -> Image { url }
+      | _ -> failwith "Text must be inside img")
+    | { name = "img"; value = None; attrib = [ ("width", width); ("height", height) ] } ->
+      (match children with
+      | [ Text url ] ->
+        ImageResized { width = int_of_string width; height = int_of_string height; url }
+      | _ -> failwith "Text must be inside img")
+    | { name = "ul"; value = None; attrib = [] }
+    | { name = "ol"; value = None; attrib = [] }
+    | { name = "list"; value = None; attrib = [] } ->
+      List
+        { items =
+            children
+            |> List.map (fun li ->
+                   match li with
+                   | Other { children; tag = { name = "li"; value = None; attrib = [] } }
+                     -> ListItem { children }
+                   | _ -> failwith "List item must be inside list")
+            |> Array.of_list
+        ; variant =
+            (match tag.name with
+            | "ul" -> `Unordered
+            | "ol" -> `Ordered
+            | "list" | _ -> `Another)
+        }
+    | { name = "code"; value = None; attrib = [] } -> Code { children }
+    | { name = "code"; value = Some language; attrib = [] } ->
+      CodeLanguageSpecific { children; language }
+    | { name = "pre"; value = None; attrib = [] } -> Preformatted { children }
+    | { name = "table"; value = None; attrib = [] } ->
+      Table
+        { rows =
+            children
+            |> List.map (function
+                   | Other { children; tag = { name = "tr"; value = None; attrib = [] } }
+                     ->
+                     TableRow
+                       { cells =
+                           children
+                           |> List.map (function
+                                  | Other
+                                      { children
+                                      ; tag = { name = "th"; value = None; attrib = [] }
+                                      } -> TableCell { children; variant = `Heading }
+                                  | Other
+                                      { children
+                                      ; tag = { name = "td"; value = None; attrib = [] }
+                                      } -> TableCell { children; variant = `Content }
+                                  | _ -> failwith "Table cell must be inside row")
+                           |> Array.of_list
+                       }
+                   | _ -> failwith "Table row must be inside table")
+            |> Array.of_list
+        }
     | tag -> Other { children; tag }
   ;;
 

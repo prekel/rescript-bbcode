@@ -1,5 +1,5 @@
 open Zora
-open Bbcode
+open BBCode
 
 let () =
   zoraBlock "Parse 1" (fun t ->
@@ -7,7 +7,7 @@ let () =
       let e =
         [ Other
             { children = [ Text "ars"; Bold { children = [ Text "art" ] } ]
-            ; tag = Parse.{ name = "tag"; value = None; attrib = [] }
+            ; tag = { name = "tag"; value = None; attrib = [] }
             }
         ]
       in
@@ -17,14 +17,14 @@ let () =
 let () =
   zoraBlock "Parse tag [tag=val]" (fun t ->
       let a = Parse.run "[tag=val]" Parse.tag in
-      let e = Parse.{ name = "tag"; value = Some "val"; attrib = [] } in
+      let e = { name = "tag"; value = Some "val"; attrib = [] } in
       t |. equal a (Some e) "tag")
 ;;
 
 let () =
   zoraBlock "Parse tag [tag]" (fun t ->
       let a = Parse.run "[tag]" Parse.tag in
-      let e = Parse.{ name = "tag"; value = None; attrib = [] } in
+      let e = { name = "tag"; value = None; attrib = [] } in
       t |. equal a (Some e) "tag")
 ;;
 
@@ -32,11 +32,10 @@ let () =
   zoraBlock "Parse tag [tag=val attr=attrval1 attr2=attrval2]" (fun t ->
       let a = Parse.run "[tag=val attr=attrval1 attr2=attrval2]" Parse.tag in
       let e =
-        Parse.
-          { name = "tag"
-          ; value = Some "val"
-          ; attrib = [ "attr", "attrval1"; "attr2", "attrval2" ]
-          }
+        { name = "tag"
+        ; value = Some "val"
+        ; attrib = [ "attr", "attrval1"; "attr2", "attrval2" ]
+        }
       in
       t |. equal a (Some e) "tag")
 ;;
