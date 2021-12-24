@@ -8,14 +8,12 @@ import * as React from 'react';
 import * as StubBS__Es6Import from './Stub.mjs';
 const StubBS: any = StubBS__Es6Import;
 
-import type {ast as BBCode_ast} from './BBCode.gen';
-
 import type {ast_item as BBCode_ast_item} from './BBCode.gen';
 
 // tslint:disable-next-line:interface-over-type-literal
-export type Props = { readonly a: BBCode_ast_item; readonly f: (_1:BBCode_ast) => JSX.Element };
+export type Props = { readonly a: BBCode_ast_item };
 
-export const make: React.ComponentType<{ readonly a: BBCode_ast_item; readonly f: (_1:BBCode_ast) => JSX.Element }> = function Stub(Arg1: any) {
+export const make: React.ComponentType<{ readonly a: BBCode_ast_item }> = function Stub(Arg1: any) {
   const $props = {a:Arg1.a.tag==="Text"
     ? {TAG: 0, _0:Arg1.a.value} as any
     : Arg1.a.tag==="Bold"
@@ -64,7 +62,7 @@ export const make: React.ComponentType<{ readonly a: BBCode_ast_item; readonly f
     ? Object.assign({TAG: 22}, {rows:Arg1.a.value.rows.map(function _element(ArrayItem1: any) { return Object.assign({TAG: 0}, {cells:ArrayItem1.cells.map(function _element(ArrayItem2: any) { return Object.assign({TAG: 0}, ArrayItem2)})})})})
     : Arg1.a.tag==="Other"
     ? Object.assign({TAG: 23}, Arg1.a.value)
-    : Object.assign({TAG: 24}, Arg1.a.value), f:Arg1.f};
+    : Object.assign({TAG: 24}, Arg1.a.value)};
   const result = React.createElement(StubBS.make, $props);
   return result
 };
