@@ -5,7 +5,6 @@ import * as Bbcode from "../src/bbcode.mjs";
 
 Zora.test("par1", (function (t) {
         var a = Bbcode.Parse.run("[tag]ars[b]art[/b][/tag]", Bbcode.Parse.pqwf(undefined, /* [] */0));
-        console.log(JSON.stringify(a));
         t.equal(a, {
               hd: {
                 TAG: /* Bold */1,
@@ -30,7 +29,74 @@ Zora.test("par1", (function (t) {
                 }
               },
               tl: /* [] */0
-            }, "qwf");
+            }, "pqwf");
+        
+      }));
+
+Zora.test("Parse tag [tag=val]", (function (t) {
+        var a = Bbcode.Parse.run("[tag=val]", Bbcode.Parse.tag);
+        t.equal(a, {
+              name: "tag",
+              value: "val",
+              attrib: /* [] */0
+            }, "tag");
+        
+      }));
+
+Zora.test("Parse tag [tag]", (function (t) {
+        var a = Bbcode.Parse.run("[tag]", Bbcode.Parse.tag);
+        t.equal(a, {
+              name: "tag",
+              value: undefined,
+              attrib: /* [] */0
+            }, "tag");
+        
+      }));
+
+Zora.test("Parse tag [tag=val attr=attrval1 attr2=attrval2]", (function (t) {
+        var a = Bbcode.Parse.run("[tag=val attr=attrval1 attr2=attrval2]", Bbcode.Parse.tag);
+        t.equal(a, {
+              name: "tag",
+              value: "val",
+              attrib: {
+                hd: [
+                  "attr",
+                  "attrval1"
+                ],
+                tl: {
+                  hd: [
+                    "attr2",
+                    "attrval2"
+                  ],
+                  tl: /* [] */0
+                }
+              }
+            }, "tag");
+        
+      }));
+
+Zora.test("Parse tag subparsers", (function (t) {
+        var a = Bbcode.Parse.run("tag", Bbcode.Parse.attr_value);
+        t.equal(a, "tag", "attr_value");
+        var a$1 = Bbcode.Parse.run("tag=tag1", Bbcode.Parse.attrib);
+        t.equal(a$1, [
+              "tag",
+              "tag1"
+            ], "attrib");
+        var a$2 = Bbcode.Parse.run("tag=tag1 tag1=tag2", Bbcode.Parse.attributes);
+        t.equal(a$2, {
+              hd: [
+                "tag",
+                "tag1"
+              ],
+              tl: {
+                hd: [
+                  "tag1",
+                  "tag2"
+                ],
+                tl: /* [] */0
+              }
+            }, "attrib");
         
       }));
 
