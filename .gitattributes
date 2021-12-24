@@ -6,3 +6,5 @@
 *.bs.js linguist-generated
 *.mjs linguist-generated
 *.gen.tsx linguist-generated
+
+**/vendor/** linguist-vendored
