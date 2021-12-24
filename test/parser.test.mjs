@@ -5,78 +5,85 @@ import * as BBCode from "../src/BBCode.mjs";
 
 Zora.test("Parse 1", (function (t) {
         var a = BBCode.Parse.run("[tag]ars[b]art[/b][/tag]", BBCode.Parse.pqwf(undefined, /* [] */0));
-        t.equal(a, {
+        var e_0 = {
+          TAG: /* Other */23,
+          children: {
+            hd: {
+              TAG: /* Text */0,
+              _0: "ars"
+            },
+            tl: {
               hd: {
-                TAG: /* Other */23,
+                TAG: /* Bold */1,
                 children: {
                   hd: {
                     TAG: /* Text */0,
-                    _0: "ars"
+                    _0: "art"
                   },
-                  tl: {
-                    hd: {
-                      TAG: /* Bold */1,
-                      children: {
-                        hd: {
-                          TAG: /* Text */0,
-                          _0: "art"
-                        },
-                        tl: /* [] */0
-                      }
-                    },
-                    tl: /* [] */0
-                  }
-                },
-                tag: {
-                  name: "tag",
-                  value: undefined,
-                  attrib: /* [] */0
+                  tl: /* [] */0
                 }
               },
               tl: /* [] */0
-            }, "pqwf");
+            }
+          },
+          tag: {
+            name: "tag",
+            value: undefined,
+            attrib: []
+          }
+        };
+        var e = {
+          hd: e_0,
+          tl: /* [] */0
+        };
+        t.equal(a, e, "pqwf");
         
       }));
 
 Zora.test("Parse tag [tag=val]", (function (t) {
         var a = BBCode.Parse.run("[tag=val]", BBCode.Parse.tag);
-        t.equal(a, {
-              name: "tag",
-              value: "val",
-              attrib: /* [] */0
-            }, "tag");
+        var e_value = "val";
+        var e_attrib = [];
+        var e = {
+          name: "tag",
+          value: e_value,
+          attrib: e_attrib
+        };
+        t.equal(a, e, "tag");
         
       }));
 
 Zora.test("Parse tag [tag]", (function (t) {
         var a = BBCode.Parse.run("[tag]", BBCode.Parse.tag);
-        t.equal(a, {
-              name: "tag",
-              value: undefined,
-              attrib: /* [] */0
-            }, "tag");
+        var e_attrib = [];
+        var e = {
+          name: "tag",
+          value: undefined,
+          attrib: e_attrib
+        };
+        t.equal(a, e, "tag");
         
       }));
 
 Zora.test("Parse tag [tag=val attr=attrval1 attr2=attrval2]", (function (t) {
         var a = BBCode.Parse.run("[tag=val attr=attrval1 attr2=attrval2]", BBCode.Parse.tag);
-        t.equal(a, {
-              name: "tag",
-              value: "val",
-              attrib: {
-                hd: [
-                  "attr",
-                  "attrval1"
-                ],
-                tl: {
-                  hd: [
-                    "attr2",
-                    "attrval2"
-                  ],
-                  tl: /* [] */0
-                }
-              }
-            }, "tag");
+        var e_value = "val";
+        var e_attrib = [
+          [
+            "attr",
+            "attrval1"
+          ],
+          [
+            "attr2",
+            "attrval2"
+          ]
+        ];
+        var e = {
+          name: "tag",
+          value: e_value,
+          attrib: e_attrib
+        };
+        t.equal(a, e, "tag");
         
       }));
 

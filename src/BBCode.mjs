@@ -85,7 +85,7 @@ var tag = Opal.$eq$great(Opal.$less$less((function (param) {
                           return function (param) {
                             return Opal.$great$great$eq(partial_arg$2, (function (param) {
                                           var partial_arg_1 = param[0];
-                                          var partial_arg_2 = param[1];
+                                          var partial_arg_2 = $$Array.of_list(param[1]);
                                           var partial_arg = [
                                             name,
                                             partial_arg_1,
@@ -120,7 +120,7 @@ function item_from_tag(children, tag) {
   };
   switch (tag_name) {
     case "b" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -133,7 +133,7 @@ function item_from_tag(children, tag) {
                 };
         }
     case "center" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -148,7 +148,7 @@ function item_from_tag(children, tag) {
     case "code" :
         var language = tag_value;
         if (language !== undefined) {
-          if (tag_attrib) {
+          if (tag_attrib.length !== 0) {
             return {
                     TAG: /* Other */23,
                     children: children,
@@ -161,7 +161,7 @@ function item_from_tag(children, tag) {
                     language: language
                   };
           }
-        } else if (tag_attrib) {
+        } else if (tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -175,7 +175,7 @@ function item_from_tag(children, tag) {
         }
     case "color" :
         var color = tag_value;
-        if (color !== undefined && !tag_attrib) {
+        if (color !== undefined && tag_attrib.length === 0) {
           return {
                   TAG: /* FontColor */6,
                   children: children,
@@ -189,7 +189,7 @@ function item_from_tag(children, tag) {
                 };
         }
     case "i" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -210,67 +210,69 @@ function item_from_tag(children, tag) {
                 };
         }
         var match = tag_attrib;
-        if (match) {
-          var match$1 = match.hd;
-          if (match$1[0] !== "width") {
-            return {
-                    TAG: /* Other */23,
-                    children: children,
-                    tag: tag$1
-                  };
-          }
-          var match$2 = match.tl;
-          if (!match$2) {
-            return {
-                    TAG: /* Other */23,
-                    children: children,
-                    tag: tag$1
-                  };
-          }
-          var match$3 = match$2.hd;
-          if (match$3[0] !== "height") {
-            return {
-                    TAG: /* Other */23,
-                    children: children,
-                    tag: tag$1
-                  };
-          }
-          if (match$2.tl) {
-            return {
-                    TAG: /* Other */23,
-                    children: children,
-                    tag: tag$1
-                  };
-          }
-          if (!children) {
-            return Pervasives.failwith("Text must be inside img");
-          }
-          var url = children.hd;
-          if (url.TAG === /* Text */0 && !children.tl) {
-            return {
-                    TAG: /* ImageResized */17,
-                    width: Caml_format.caml_int_of_string(match$1[1]),
-                    height: Caml_format.caml_int_of_string(match$3[1]),
-                    url: url._0
-                  };
-          } else {
-            return Pervasives.failwith("Text must be inside img");
-          }
-        }
-        if (!children) {
-          return Pervasives.failwith("Text must be inside img");
-        }
-        var url$1 = children.hd;
-        if (url$1.TAG === /* Text */0 && !children.tl) {
+        var len = match.length;
+        if (len >= 3) {
           return {
-                  TAG: /* Image */16,
-                  url: url$1._0
+                  TAG: /* Other */23,
+                  children: children,
+                  tag: tag$1
                 };
-        } else {
-          return Pervasives.failwith("Text must be inside img");
+        }
+        switch (len) {
+          case 0 :
+              if (!children) {
+                return Pervasives.failwith("Text must be inside img");
+              }
+              var url = children.hd;
+              if (url.TAG === /* Text */0 && !children.tl) {
+                return {
+                        TAG: /* Image */16,
+                        url: url._0
+                      };
+              } else {
+                return Pervasives.failwith("Text must be inside img");
+              }
+          case 1 :
+              return {
+                      TAG: /* Other */23,
+                      children: children,
+                      tag: tag$1
+                    };
+          case 2 :
+              var match$1 = match[0];
+              if (match$1[0] !== "width") {
+                return {
+                        TAG: /* Other */23,
+                        children: children,
+                        tag: tag$1
+                      };
+              }
+              var match$2 = match[1];
+              if (match$2[0] !== "height") {
+                return {
+                        TAG: /* Other */23,
+                        children: children,
+                        tag: tag$1
+                      };
+              }
+              if (!children) {
+                return Pervasives.failwith("Text must be inside img");
+              }
+              var url$1 = children.hd;
+              if (url$1.TAG === /* Text */0 && !children.tl) {
+                return {
+                        TAG: /* ImageResized */17,
+                        width: Caml_format.caml_int_of_string(match$1[1]),
+                        height: Caml_format.caml_int_of_string(match$2[1]),
+                        url: url$1._0
+                      };
+              } else {
+                return Pervasives.failwith("Text must be inside img");
+              }
+          
         }
     case "left" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -283,7 +285,7 @@ function item_from_tag(children, tag) {
                 };
         }
     case "pre" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -298,7 +300,7 @@ function item_from_tag(children, tag) {
     case "quote" :
         var name = tag_value;
         if (name !== undefined) {
-          if (tag_attrib) {
+          if (tag_attrib.length !== 0) {
             return {
                     TAG: /* Other */23,
                     children: children,
@@ -311,7 +313,7 @@ function item_from_tag(children, tag) {
                     quote: name
                   };
           }
-        } else if (tag_attrib) {
+        } else if (tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -324,7 +326,7 @@ function item_from_tag(children, tag) {
                 };
         }
     case "right" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -337,7 +339,7 @@ function item_from_tag(children, tag) {
                 };
         }
     case "s" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -351,7 +353,7 @@ function item_from_tag(children, tag) {
         }
     case "size" :
         var number = tag_value;
-        if (number !== undefined && !tag_attrib) {
+        if (number !== undefined && tag_attrib.length === 0) {
           return {
                   TAG: /* FontSize */5,
                   children: children,
@@ -367,7 +369,7 @@ function item_from_tag(children, tag) {
     case "spoiler" :
         var name$1 = tag_value;
         if (name$1 !== undefined) {
-          if (tag_attrib) {
+          if (tag_attrib.length !== 0) {
             return {
                     TAG: /* Other */23,
                     children: children,
@@ -380,7 +382,7 @@ function item_from_tag(children, tag) {
                     spoiler: name$1
                   };
           }
-        } else if (tag_attrib) {
+        } else if (tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -400,44 +402,28 @@ function item_from_tag(children, tag) {
                   tag: tag$1
                 };
         }
-        var match$4 = tag_attrib;
-        if (!match$4) {
+        var match$3 = tag_attrib;
+        if (match$3.length !== 1) {
           return {
                   TAG: /* Other */23,
                   children: children,
                   tag: tag$1
                 };
         }
-        var match$5 = match$4.hd;
-        switch (match$5[0]) {
+        var match$4 = match$3[0];
+        switch (match$4[0]) {
           case "color" :
-              if (match$4.tl) {
-                return {
-                        TAG: /* Other */23,
-                        children: children,
-                        tag: tag$1
-                      };
-              } else {
-                return {
-                        TAG: /* FontColor */6,
-                        children: children,
-                        color: match$5[1]
-                      };
-              }
+              return {
+                      TAG: /* FontColor */6,
+                      children: children,
+                      color: match$4[1]
+                    };
           case "size" :
-              if (match$4.tl) {
-                return {
-                        TAG: /* Other */23,
-                        children: children,
-                        tag: tag$1
-                      };
-              } else {
-                return {
-                        TAG: /* FontSize */5,
-                        children: children,
-                        size: Caml_format.caml_int_of_string(match$5[1])
-                      };
-              }
+              return {
+                      TAG: /* FontSize */5,
+                      children: children,
+                      size: Caml_format.caml_int_of_string(match$4[1])
+                    };
           default:
             return {
                     TAG: /* Other */23,
@@ -446,7 +432,7 @@ function item_from_tag(children, tag) {
                   };
         }
     case "table" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -460,7 +446,7 @@ function item_from_tag(children, tag) {
                                 return Pervasives.failwith("Table row must be inside table");
                               }
                               var match = param.tag;
-                              if (match.name === "tr" && !(match.value !== undefined || match.attrib)) {
+                              if (match.name === "tr" && !(match.value !== undefined || match.attrib.length !== 0)) {
                                 return /* TableRow */{
                                         cells: $$Array.of_list(List.map((function (param) {
                                                     if (param.TAG !== /* Other */23) {
@@ -470,7 +456,7 @@ function item_from_tag(children, tag) {
                                                     var children = param.children;
                                                     switch (match.name) {
                                                       case "td" :
-                                                          if (match.value !== undefined || match.attrib) {
+                                                          if (match.value !== undefined || match.attrib.length !== 0) {
                                                             return Pervasives.failwith("Table cell must be inside row");
                                                           } else {
                                                             return /* TableCell */{
@@ -479,7 +465,7 @@ function item_from_tag(children, tag) {
                                                                   };
                                                           }
                                                       case "th" :
-                                                          if (match.value !== undefined || match.attrib) {
+                                                          if (match.value !== undefined || match.attrib.length !== 0) {
                                                             return Pervasives.failwith("Table cell must be inside row");
                                                           } else {
                                                             return /* TableCell */{
@@ -499,7 +485,7 @@ function item_from_tag(children, tag) {
                 };
         }
     case "u" :
-        if (tag_value !== undefined || tag_attrib) {
+        if (tag_value !== undefined || tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -518,7 +504,7 @@ function item_from_tag(children, tag) {
     case "url" :
         var url$2 = tag_value;
         if (url$2 !== undefined) {
-          if (tag_attrib) {
+          if (tag_attrib.length !== 0) {
             return {
                     TAG: /* Other */23,
                     children: children,
@@ -532,7 +518,7 @@ function item_from_tag(children, tag) {
                   };
           }
         }
-        if (tag_attrib) {
+        if (tag_attrib.length !== 0) {
           return {
                   TAG: /* Other */23,
                   children: children,
@@ -565,16 +551,16 @@ function item_from_tag(children, tag) {
             tag: tag$1
           };
   }
-  if (tag_attrib) {
+  if (tag_attrib.length !== 0) {
     return {
             TAG: /* Other */23,
             children: children,
             tag: tag$1
           };
   }
-  var match$6 = tag.name;
+  var match$5 = tag.name;
   var tmp;
-  switch (match$6) {
+  switch (match$5) {
     case "list" :
         tmp = "Another";
         break;
@@ -594,7 +580,7 @@ function item_from_tag(children, tag) {
                         return Pervasives.failwith("List item must be inside list");
                       }
                       var match = li.tag;
-                      if (match.name === "li" && !(match.value !== undefined || match.attrib)) {
+                      if (match.name === "li" && !(match.value !== undefined || match.attrib.length !== 0)) {
                         return /* ListItem */{
                                 children: li.children
                               };

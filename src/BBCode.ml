@@ -1,7 +1,7 @@
 type tag =
   { name : string
   ; value : string option
-  ; attrib : (string * string) list
+  ; attrib : (string * string) array
   }
 [@@genType]
 
@@ -61,20 +61,19 @@ type ast_item =
   | YouTube of { id : string }
 [@@genType]
 
-and ast = ast_item list [@@genType]
+and ast = ast_item list
 
-and list_item = ListItem of { children : ast } [@@genType]
+and list_item = ListItem of { children : ast }
 
-and table_row = TableRow of { cells : table_cell array } [@@genType]
+and table_row = TableRow of { cells : table_cell array }
 
 and table_cell =
   | TableCell of
       { children : ast
       ; variant : [ `Heading | `Content ]
       }
-[@@genType]
 
-let ast_to_array (a : ast) : ast_item array = Array.of_list a [@@genType]
+let ast_to_array (a : ast) : ast_item array = Array.of_list a
 
 module Parse = struct
   open Opal
@@ -104,7 +103,7 @@ module Parse = struct
           => (fun it -> Some it)
           <|> return None
           >>= (fun value -> attributes => fun attrib -> value, attrib)
-          >>= fun (value, attrib) -> return (name, value, attrib))
+          >>= fun (value, attrib) -> return (name, value, attrib |> Array.of_list))
     << rsb
     => fun (name, value, attrib) -> { name; value; attrib }
   ;;
@@ -114,49 +113,51 @@ module Parse = struct
 
   let item_from_tag children tag =
     match { tag with name = Js.String.toLowerCase tag.name } with
-    | { name = "b"; value = None; attrib = [] } -> Bold { children }
-    | { name = "i"; value = None; attrib = [] } -> Italic { children }
-    | { name = "u"; value = None; attrib = [] } -> Underline { children }
-    | { name = "s"; value = None; attrib = [] } -> Strikethrough { children }
-    | { name = "size"; value = Some number; attrib = [] }
-    | { name = "style"; value = None; attrib = [ ("size", number) ] } ->
+    | { name = "b"; value = None; attrib = [||] } -> Bold { children }
+    | { name = "i"; value = None; attrib = [||] } -> Italic { children }
+    | { name = "u"; value = None; attrib = [||] } -> Underline { children }
+    | { name = "s"; value = None; attrib = [||] } -> Strikethrough { children }
+    | { name = "size"; value = Some number; attrib = [||] }
+    | { name = "style"; value = None; attrib = [| ("size", number) |] } ->
       FontSize { children; size = int_of_string number }
-    | { name = "color"; value = Some color; attrib = [] }
-    | { name = "style"; value = None; attrib = [ ("color", color) ] } ->
+    | { name = "color"; value = Some color; attrib = [||] }
+    | { name = "style"; value = None; attrib = [| ("color", color) |] } ->
       FontColor { children; color }
-    | { name = "center"; value = None; attrib = [] } -> CenterText { children }
-    | { name = "left"; value = None; attrib = [] } -> LeftAlignText { children }
-    | { name = "right"; value = None; attrib = [] } -> RightAlignText { children }
-    | { name = "quote"; value = None; attrib = [] } -> Quote { children }
-    | { name = "quote"; value = Some name; attrib = [] } ->
+    | { name = "center"; value = None; attrib = [||] } -> CenterText { children }
+    | { name = "left"; value = None; attrib = [||] } -> LeftAlignText { children }
+    | { name = "right"; value = None; attrib = [||] } -> RightAlignText { children }
+    | { name = "quote"; value = None; attrib = [||] } -> Quote { children }
+    | { name = "quote"; value = Some name; attrib = [||] } ->
       QuoteNamed { children; quote = name }
-    | { name = "spoiler"; value = None; attrib = [] } -> Spoiler { children }
-    | { name = "spoiler"; value = Some name; attrib = [] } ->
+    | { name = "spoiler"; value = None; attrib = [||] } -> Spoiler { children }
+    | { name = "spoiler"; value = Some name; attrib = [||] } ->
       SpoilerNamed { children; spoiler = name }
-    | { name = "url"; value = None; attrib = [] } ->
+    | { name = "url"; value = None; attrib = [||] } ->
       (match children with
       | [ Text url ] -> Link { url }
       | _ -> failwith "Text must be inside url")
-    | { name = "url"; value = Some url; attrib = [] } -> LinkNamed { children; url }
-    | { name = "img"; value = None; attrib = [] } ->
+    | { name = "url"; value = Some url; attrib = [||] } -> LinkNamed { children; url }
+    | { name = "img"; value = None; attrib = [||] } ->
       (match children with
       | [ Text url ] -> Image { url }
       | _ -> failwith "Text must be inside img")
-    | { name = "img"; value = None; attrib = [ ("width", width); ("height", height) ] } ->
+    | { name = "img"; value = None; attrib = [| ("width", width); ("height", height) |] }
+      ->
       (match children with
       | [ Text url ] ->
         ImageResized { width = int_of_string width; height = int_of_string height; url }
       | _ -> failwith "Text must be inside img")
-    | { name = "ul"; value = None; attrib = [] }
-    | { name = "ol"; value = None; attrib = [] }
-    | { name = "list"; value = None; attrib = [] } ->
+    | { name = "ul"; value = None; attrib = [||] }
+    | { name = "ol"; value = None; attrib = [||] }
+    | { name = "list"; value = None; attrib = [||] } ->
       List
         { items =
             children
             |> List.map (fun li ->
                    match li with
-                   | Other { children; tag = { name = "li"; value = None; attrib = [] } }
-                     -> ListItem { children }
+                   | Other
+                       { children; tag = { name = "li"; value = None; attrib = [||] } } ->
+                     ListItem { children }
                    | _ -> failwith "List item must be inside list")
             |> Array.of_list
         ; variant =
@@ -165,28 +166,28 @@ module Parse = struct
             | "ol" -> `Ordered
             | "list" | _ -> `Another)
         }
-    | { name = "code"; value = None; attrib = [] } -> Code { children }
-    | { name = "code"; value = Some language; attrib = [] } ->
+    | { name = "code"; value = None; attrib = [||] } -> Code { children }
+    | { name = "code"; value = Some language; attrib = [||] } ->
       CodeLanguageSpecific { children; language }
-    | { name = "pre"; value = None; attrib = [] } -> Preformatted { children }
-    | { name = "table"; value = None; attrib = [] } ->
+    | { name = "pre"; value = None; attrib = [||] } -> Preformatted { children }
+    | { name = "table"; value = None; attrib = [||] } ->
       Table
         { rows =
             children
             |> List.map (function
-                   | Other { children; tag = { name = "tr"; value = None; attrib = [] } }
-                     ->
+                   | Other
+                       { children; tag = { name = "tr"; value = None; attrib = [||] } } ->
                      TableRow
                        { cells =
                            children
                            |> List.map (function
                                   | Other
                                       { children
-                                      ; tag = { name = "th"; value = None; attrib = [] }
+                                      ; tag = { name = "th"; value = None; attrib = [||] }
                                       } -> TableCell { children; variant = `Heading }
                                   | Other
                                       { children
-                                      ; tag = { name = "td"; value = None; attrib = [] }
+                                      ; tag = { name = "td"; value = None; attrib = [||] }
                                       } -> TableCell { children; variant = `Content }
                                   | _ -> failwith "Table cell must be inside row")
                            |> Array.of_list

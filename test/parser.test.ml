@@ -7,7 +7,7 @@ let () =
       let e =
         [ Other
             { children = [ Text "ars"; Bold { children = [ Text "art" ] } ]
-            ; tag = { name = "tag"; value = None; attrib = [] }
+            ; tag = { name = "tag"; value = None; attrib = [||] }
             }
         ]
       in
@@ -17,14 +17,14 @@ let () =
 let () =
   zoraBlock "Parse tag [tag=val]" (fun t ->
       let a = Parse.run "[tag=val]" Parse.tag in
-      let e = { name = "tag"; value = Some "val"; attrib = [] } in
+      let e = { name = "tag"; value = Some "val"; attrib = [||] } in
       t |. equal a (Some e) "tag")
 ;;
 
 let () =
   zoraBlock "Parse tag [tag]" (fun t ->
       let a = Parse.run "[tag]" Parse.tag in
-      let e = { name = "tag"; value = None; attrib = [] } in
+      let e = { name = "tag"; value = None; attrib = [||] } in
       t |. equal a (Some e) "tag")
 ;;
 
@@ -34,7 +34,7 @@ let () =
       let e =
         { name = "tag"
         ; value = Some "val"
-        ; attrib = [ "attr", "attrval1"; "attr2", "attrval2" ]
+        ; attrib = [| "attr", "attrval1"; "attr2", "attrval2" |]
         }
       in
       t |. equal a (Some e) "tag")
