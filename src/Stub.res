@@ -1,7 +1,7 @@
 open BBCode
 
 @genType @react.component
-let make = (~a, ~f) => {
+let make = (~a) => {
   switch a {
   | Text(t) => <span className="bbcode"> {React.string(t)} </span>
   | Bold({children: t})
@@ -22,7 +22,7 @@ let make = (~a, ~f) => {
   | CodeLanguageSpecific({children: t})
   | Preformatted({children: t})
   | Other({children: t}) =>
-    <div className="bbcode"> {f(t)} </div>
+    <div className="bbcode" />
   | Table(_)
   | YouTube(_)
   | List(_)
