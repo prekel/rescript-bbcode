@@ -3,12 +3,17 @@
 import * as Zora from "zora";
 import * as Bbcode from "../src/bbcode.mjs";
 
-Zora.test("par1", (function (t) {
+Zora.test("Parse 1", (function (t) {
         var a = Bbcode.Parse.run("[tag]ars[b]art[/b][/tag]", Bbcode.Parse.pqwf(undefined, /* [] */0));
         t.equal(a, {
               hd: {
-                TAG: /* Bold */1,
+                TAG: /* Other */3,
                 _0: {
+                  name: "tag",
+                  value: undefined,
+                  attrib: /* [] */0
+                },
+                _1: {
                   hd: {
                     TAG: /* Text */0,
                     _0: "ars"

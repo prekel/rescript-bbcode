@@ -103,6 +103,45 @@ var bbcodetag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(lsb, Opal.many(
 
 var closedtag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(Opal.$great$great(lsb, slash), Opal.many(Opal.letter)), Opal.implode), rsb);
 
+function item_from_tag(children, tag) {
+  switch (tag.name) {
+    case "b" :
+        if (tag.value !== undefined || tag.attrib) {
+          return {
+                  TAG: /* Other */3,
+                  _0: tag,
+                  _1: children
+                };
+        } else {
+          return {
+                  TAG: /* Bold */1,
+                  _0: children
+                };
+        }
+    case "url" :
+        var url = tag.value;
+        if (url !== undefined && !tag.attrib) {
+          return {
+                  TAG: /* LinkNamed */2,
+                  _0: url,
+                  _1: children
+                };
+        } else {
+          return {
+                  TAG: /* Other */3,
+                  _0: tag,
+                  _1: children
+                };
+        }
+    default:
+      return {
+              TAG: /* Other */3,
+              _0: tag,
+              _1: children
+            };
+  }
+}
+
 function pqwf(inqOpt, stck) {
   var inq = inqOpt !== undefined ? Caml_option.valFromOption(inqOpt) : undefined;
   var partial_arg;
@@ -151,7 +190,7 @@ function pqwf(inqOpt, stck) {
     return Opal.$less$pipe$great((function (param) {
                   return Opal.$great$great$eq((function (param) {
                                 return Opal.$great$great$eq((function (param) {
-                                              return Opal.$great$great$eq(bbcodetag, (function (tg) {
+                                              return Opal.$great$great$eq(tag, (function (tg) {
                                                             var partial_arg = pqwf(undefined, {
                                                                   hd: tg,
                                                                   tl: stck
@@ -185,13 +224,11 @@ function pqwf(inqOpt, stck) {
                                               };
                                             }), param);
                               }), (function (param) {
-                                if (param[0] !== param[1]) {
+                                var tg = param[0];
+                                if (tg.name !== param[1]) {
                                   return Opal.mzero;
                                 }
-                                var partial_arg_0 = {
-                                  TAG: /* Bold */1,
-                                  _0: param[2]
-                                };
+                                var partial_arg_0 = item_from_tag(param[2], tg);
                                 var partial_arg = {
                                   hd: partial_arg_0,
                                   tl: /* [] */0
@@ -219,6 +256,7 @@ var Parse = {
   tag: tag,
   bbcodetag: bbcodetag,
   closedtag: closedtag,
+  item_from_tag: item_from_tag,
   pqwf: pqwf,
   run: run
 };

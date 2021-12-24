@@ -2,9 +2,14 @@ open Zora
 open Bbcode
 
 let () =
-  zoraBlock "par1" (fun t ->
+  zoraBlock "Parse 1" (fun t ->
       let a = Parse.run "[tag]ars[b]art[/b][/tag]" (Parse.pqwf []) in
-      let e = [ Bold [ Text "ars"; Bold [ Text "art" ] ] ] in
+      let e =
+        [ Other
+            ( Parse.{ name = "tag"; value = None; attrib = [] }
+            , [ Text "ars"; Bold [ Text "art" ] ] )
+        ]
+      in
       t |. equal a (Some e) "pqwf")
 ;;
 
