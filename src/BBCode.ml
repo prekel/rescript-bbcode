@@ -61,19 +61,20 @@ type ast_item =
   | YouTube of { id : string }
 [@@genType]
 
-and ast = ast_item list
+and ast = ast_item list [@@genType]
 
-and list_item = ListItem of { children : ast }
+and list_item = ListItem of { children : ast } [@@genType]
 
-and table_row = TableRow of { cells : table_cell array }
+and table_row = TableRow of { cells : table_cell array } [@@genType]
 
 and table_cell =
   | TableCell of
       { children : ast
       ; variant : [ `Heading | `Content ]
       }
+[@@genType]
 
-let ast_to_array (a : ast) : ast_item array = Array.of_list a
+let ast_to_array (a : ast) : ast_item array = Array.of_list a [@@genType]
 
 module Parse = struct
   open Opal
@@ -217,3 +218,5 @@ module Parse = struct
 
   let run str parser = str |> Opal.LazyStream.of_string |> Opal.parse parser
 end
+
+let parse a = Parse.run a (Parse.pqwf []) [@@genType]

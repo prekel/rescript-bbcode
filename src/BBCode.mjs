@@ -711,9 +711,14 @@ var Parse = {
   run: run
 };
 
+function parse(a) {
+  return run(a, pqwf(undefined, /* [] */0));
+}
+
 export {
   ast_to_array ,
   Parse ,
+  parse ,
   
 }
 /* rsb Not a pure module */
