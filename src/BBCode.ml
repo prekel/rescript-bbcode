@@ -199,21 +199,25 @@ module Parse = struct
     | tag -> Other { children; tag }
   ;;
 
-  let rec pqwf ?(inq = None) stck : (char, ast_item list) parser =
+  let parse_bbcode loop stck =
     tag
-    >>= (fun tg -> pqwf (tg :: stck) >>= fun it -> return (tg, it))
+    >>= (fun tg -> loop (tg :: stck) >>= fun it -> return (tg, it))
     >>= (fun (tg, ai) -> closedtag >>= fun ctg -> return (tg, ctg, ai))
-    >>= (fun (tg, ctg, ai) ->
-          if tg.name = ctg then return [ item_from_tag ai tg ] else mzero)
-    <|>
-    match inq with
-    | None ->
-      many (none_of [])
-      => implode
-      => (fun it -> Text it)
-      >>= (fun it -> pqwf ~inq:(Some it) stck >>= fun it2 -> return (it, it2))
-      >>= fun (it, ot) -> return (it :: ot)
-    | Some _ -> return []
+    >>= fun (tg, ctg, ai) ->
+    if tg.name = ctg then return [ item_from_tag ai tg ] else mzero
+  ;;
+
+  let rec pqwf ?(inq = None) stck : (char, ast_item list) parser =
+    parse_bbcode pqwf stck
+    <|> (match inq with
+        | None ->
+          many (none_of [])
+          => implode
+          => (fun it -> Text it)
+          >>= (fun it -> pqwf ~inq:(Some it) stck >>= fun it2 -> return (it, it2))
+          >>= fun (it, ot) -> return (it :: ot)
+        | Some _ -> return [])
+    <|> (lsb => fun _ -> [ Text "[" ])
   ;;
 
   let run str parser = str |> Opal.LazyStream.of_string |> Opal.parse parser

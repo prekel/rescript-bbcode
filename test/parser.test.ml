@@ -52,3 +52,31 @@ let () =
       let e = [ "tag", "tag1"; "tag1", "tag2" ] in
       t |. equal a (Some e) "attrib")
 ;;
+
+let () =
+  zoraBlock "Parse big " (fun t ->
+      let a =
+        parse
+          {|In near future science becomes dominant eroding ethic and moral values. Main character is a scientist conducting cloning experiments for an illegal company. Women from "Valkure" government special affairs agency storm this facility to put an end to this organization, but fall prey to set traps just as previous invaders. With such excellent new "material" experiments get much bolder.
+
+[From [url=https://vndbreview.blogspot.com/2020/08/vn-of-month-july-2008-kara-no-shoujo.html]vndbreview[/url]]|}
+      in
+      ())
+;;
+
+let () =
+  zoraBlock "Parse big " (fun t ->
+      let a =
+        parse
+          {|In near future science becomes dominant eroding ethic and moral values. Main character is a scientist conducting cloning experiments for an illegal company. Women from "Valkure" government special affairs agency storm this facility to put an end to this organization, but fall prey to set traps just as previous invaders. With such excellent new "material" experiments get much bolder.
+
+From [url=https://vndbreview.blogspot.com/2020/08/vn-of-month-july-2008-kara-no-shoujo.html]vndbreview[/url]|}
+      in
+      ())
+;;
+
+let () =
+  zoraBlock "Parse [From .." (fun t ->
+      let a = parse {|In near [From [url=https://example.com/]urlcontent[/url]]|} in
+      Js.Console.log a)
+;;
