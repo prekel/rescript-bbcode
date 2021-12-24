@@ -2,35 +2,30 @@
 
 import * as Curry from "rescript/lib/es6/curry.js";
 import * as React from "react";
-import * as Belt_List from "rescript/lib/es6/belt_List.js";
-import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 
 function Stub(Props) {
   var a = Props.a;
   var f = Props.f;
-  var art = Belt_Array.map(Belt_List.toArray(a), (function (b) {
-          switch (b.TAG | 0) {
-            case /* Text */0 :
-                return React.createElement("span", {
-                            className: "bbcode"
-                          }, b._0);
-            case /* Link */14 :
-            case /* Image */16 :
-            case /* ImageResized */17 :
-            case /* List */18 :
-            case /* Table */22 :
-            case /* YouTube */24 :
-                break;
-            default:
-              return React.createElement("div", {
-                          className: "bbcode"
-                        }, Curry._1(f, b.children));
-          }
-          return React.createElement("div", {
-                      className: "bbcode"
-                    });
-        }));
-  return React.createElement(React.Fragment, undefined, art);
+  switch (a.TAG | 0) {
+    case /* Text */0 :
+        return React.createElement("span", {
+                    className: "bbcode"
+                  }, a._0);
+    case /* Link */14 :
+    case /* Image */16 :
+    case /* ImageResized */17 :
+    case /* List */18 :
+    case /* Table */22 :
+    case /* YouTube */24 :
+        break;
+    default:
+      return React.createElement("div", {
+                  className: "bbcode"
+                }, Curry._1(f, a.children));
+  }
+  return React.createElement("div", {
+              className: "bbcode"
+            });
 }
 
 var make = Stub;
