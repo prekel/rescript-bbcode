@@ -7,13 +7,8 @@ Zora.test("Parse 1", (function (t) {
         var a = Bbcode.Parse.run("[tag]ars[b]art[/b][/tag]", Bbcode.Parse.pqwf(undefined, /* [] */0));
         t.equal(a, {
               hd: {
-                TAG: /* Other */3,
-                _0: {
-                  name: "tag",
-                  value: undefined,
-                  attrib: /* [] */0
-                },
-                _1: {
+                TAG: /* Other */23,
+                children: {
                   hd: {
                     TAG: /* Text */0,
                     _0: "ars"
@@ -21,7 +16,7 @@ Zora.test("Parse 1", (function (t) {
                   tl: {
                     hd: {
                       TAG: /* Bold */1,
-                      _0: {
+                      children: {
                         hd: {
                           TAG: /* Text */0,
                           _0: "art"
@@ -31,6 +26,11 @@ Zora.test("Parse 1", (function (t) {
                     },
                     tl: /* [] */0
                   }
+                },
+                tag: {
+                  name: "tag",
+                  value: undefined,
+                  attrib: /* [] */0
                 }
               },
               tl: /* [] */0

@@ -6,11 +6,74 @@ type tag =
 
 type ast_item =
   | Text of string
-  | Bold of ast
-  | LinkNamed of string * ast
-  | Other of tag * ast
+  | Bold of { children : ast }
+  | Italic of { children : ast }
+  | Underline of { children : ast }
+  | Strikethrough of { children : ast }
+  | FontSize of
+      { children : ast
+      ; size : int
+      }
+  | FontColor of
+      { children : ast
+      ; color : string
+      }
+  | CenterText of { children : ast }
+  | LeftAlignText of { children : ast }
+  | RightAlignText of { children : ast }
+  | Quote of { children : ast }
+  | QuoteNamed of
+      { children : ast
+      ; quote : string
+      }
+  | Spoiler of { children : ast }
+  | SpoilerNamed of
+      { children : ast
+      ; spoiler : string
+      }
+  | Link of { url : string }
+  | LinkNamed of
+      { children : ast
+      ; url : string
+      }
+  | Image of { url : string }
+  | ImageResized of
+      { width : int
+      ; height : int
+      ; url : string
+      }
+  | List of
+      { items : list_item array
+      ; variant : [ `Unordered | `Ordered | `Another ]
+      }
+  | Code of { children : ast }
+  | CodeLanguageSpecific of
+      { children : ast
+      ; language : string
+      }
+  | Preformatted of { children : ast }
+  | Table of { rows : table_row array }
+  | Other of
+      { children : ast
+      ; tag : tag
+      }
+  | YouTube of { id : string }
+[@@genType]
 
-and ast = ast_item list
+and ast = ast_item list [@@genType]
+
+and list_item = ListItem of { children : ast } [@@genType]
+
+and table_row = TableRow of { cells : table_cell array } [@@genType]
+
+and table_cell =
+  | TableCell of
+      { children : ast
+      ; variant : [ `Heading | `Content ]
+      }
+[@@genType]
+
+let ast_to_array (a : ast) : ast_item array = Array.of_list a [@@genType]
 
 module Parse = struct
   open Opal
@@ -48,10 +111,20 @@ module Parse = struct
   let bbcodetag = lsb >> many letter => implode << rsb
   let closedtag = lsb >> slash >> many letter => implode << rsb
 
-  let item_from_tag children = function
-    | { name = "b"; value = None; attrib = [] } -> Bold children
-    | { name = "url"; value = Some url; attrib = [] } -> LinkNamed (url, children)
-    | tag -> Other (tag, children)
+  let item_from_tag children tag =
+    match { tag with name = Js.String.toLowerCase tag.name } with
+    | { name = "b"; value = None; attrib = [] } -> Bold { children }
+    | { name = "i"; value = None; attrib = [] } -> Italic { children }
+    | { name = "u"; value = None; attrib = [] } -> Underline { children }
+    | { name = "s"; value = None; attrib = [] } -> Strikethrough { children }
+    | { name = "size"; value = Some number; attrib = [] }
+    | { name = "style"; value = None; attrib = [ ("size", number) ] } ->
+      FontSize { children; size = int_of_string number }
+    | { name = "color"; value = Some color; attrib = [] }
+    | { name = "style"; value = None; attrib = [ ("color", color) ] } ->
+      FontColor { children; color }
+    | { name = "url"; value = Some url; attrib = [] } -> LinkNamed { children; url }
+    | tag -> Other { children; tag }
   ;;
 
   let rec pqwf ?(inq = None) stck : (char, ast_item list) parser =

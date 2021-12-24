@@ -6,8 +6,9 @@ let () =
       let a = Parse.run "[tag]ars[b]art[/b][/tag]" (Parse.pqwf []) in
       let e =
         [ Other
-            ( Parse.{ name = "tag"; value = None; attrib = [] }
-            , [ Text "ars"; Bold [ Text "art" ] ] )
+            { children = [ Text "ars"; Bold { children = [ Text "art" ] } ]
+            ; tag = Parse.{ name = "tag"; value = None; attrib = [] }
+            }
         ]
       in
       t |. equal a (Some e) "pqwf")
