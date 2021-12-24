@@ -208,7 +208,7 @@ module Parse = struct
     <|>
     match inq with
     | None ->
-      many letter
+      many (none_of [])
       => implode
       => (fun it -> Text it)
       >>= (fun it -> pqwf ~inq:(Some it) stck >>= fun it2 -> return (it, it2))

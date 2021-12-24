@@ -600,7 +600,7 @@ function pqwf(inqOpt, stck) {
         return Opal.$$return(/* [] */0, param);
       });
   } else {
-    var partial_arg$1 = Opal.$eq$great(Opal.$eq$great(Opal.many(Opal.letter), Opal.implode), (function (it) {
+    var partial_arg$1 = Opal.$eq$great(Opal.$eq$great(Opal.many(Opal.none_of(/* [] */0)), Opal.implode), (function (it) {
             return {
                     TAG: /* Text */0,
                     _0: it

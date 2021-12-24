@@ -26,7 +26,7 @@ let make = (~a) => {
   | Table(_)
   | YouTube(_)
   | List(_)
-  | Image(_)
+  | Image(_)  
   | ImageResized(_)
   | Link(_) =>
     <div className="bbcode" />
