@@ -65,3 +65,6 @@ let mapBBaux = (a: list<bb_item>, f) => {
 
 @genType
 let mapBB = (a, f) => mapBBaux(a->Belt.List.fromArray, f)->Belt.List.toArray->Belt.Array.reverse
+
+@genType
+let arbabab = () => Opal.letter

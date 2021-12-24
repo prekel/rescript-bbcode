@@ -10,6 +10,8 @@ const Curry: any = Curry__Es6Import;
 import * as IndexBS__Es6Import from './Index.mjs';
 const IndexBS: any = IndexBS__Es6Import;
 
+import type {parser as Opal_parser} from './Opal.gen';
+
 // tslint:disable-next-line:interface-over-type-literal
 export type bb_item = 
     { tag: "Text"; value: { readonly text: string } }
@@ -28,3 +30,5 @@ export const mapBB: <T1>(a:bb_item[], f:((_1:bb_item) => T1)) => T1[] = function
     });
   return result
 };
+
+export const arbabab: () => Opal_parser<char,char> = IndexBS.arbabab;
