@@ -96,7 +96,7 @@ module Parse = struct
 
   let tag =
     lsb
-    >> many letter
+    >> many1 letter
     => implode
     >>= (fun name ->
           eql
@@ -109,8 +109,8 @@ module Parse = struct
     => fun (name, value, attrib) -> { name; value; attrib }
   ;;
 
-  let bbcodetag = lsb >> many letter => implode << rsb
-  let closedtag = lsb >> slash >> many letter => implode << rsb
+  let bbcodetag = lsb >> many1 letter => implode << rsb
+  let closedtag = lsb >> slash >> many1 letter => implode << rsb
 
   let item_from_tag children tag =
     match { tag with name = Js.String.toLowerCase tag.name } with
@@ -207,20 +207,55 @@ module Parse = struct
     if tg.name = ctg then return [ item_from_tag ai tg ] else mzero
   ;;
 
+  let bbcode_parser loop =
+    tag
+    >>= (fun tg -> loop () >>= fun it -> return (tg, it))
+    >>= (fun (tg, ai) -> closedtag >>= fun ctg -> return (tg, ctg, ai))
+    >>= fun (tg, ctg, ai) -> if tg.name = ctg then return (item_from_tag ai tg) else mzero
+  ;;
+
+  let text_parser = many1 (none_of [ '[' ]) => implode => fun it -> Text it
+
+  let rec ast_parer () =
+    many
+      (text_parser
+      <|> bbcode_parser ast_parer
+      <|> (lsb => (fun _ -> "[") => fun it -> Text it))
+  ;;
+
+  let fix_ast ast =
+    List.fold_left
+      (fun state el ->
+        match state, el with
+        | Text t1 :: o, Text t2 -> Text (t1 ^ t2) :: o
+        | _ -> el :: state)
+      []
+      ast
+    |> List.rev
+  ;;
+
   let rec pqwf ?(inq = None) stck : (char, ast_item list) parser =
     parse_bbcode pqwf stck
     <|> (match inq with
         | None ->
-          many (none_of [])
+          many1 (none_of [ '[' ])
           => implode
           => (fun it -> Text it)
           >>= (fun it -> pqwf ~inq:(Some it) stck >>= fun it2 -> return (it, it2))
           >>= fun (it, ot) -> return (it :: ot)
         | Some _ -> return [])
-    <|> (lsb => fun _ -> [ Text "[" ])
+    <|> (lsb
+        => (fun _ -> "[")
+        => (fun it -> Text it)
+        >>= (fun it -> pqwf ~inq:(Some it) stck >>= fun it2 -> return (it, it2))
+        >>= fun (it, ot) -> return (it :: ot))
   ;;
 
   let run str parser = str |> Opal.LazyStream.of_string |> Opal.parse parser
+
+  let run1 str parser =
+    str |> Opal.LazyStream.of_string |> Opal.parse parser |. Belt.Option.map fix_ast
+  ;;
 end
 
 let parse a = Parse.run a (Parse.pqwf []) [@@genType]

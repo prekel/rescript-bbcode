@@ -5,6 +5,7 @@ import * as Opal from "./vendor/opal/opal.mjs";
 import * as $$Array from "rescript/lib/es6/array.js";
 import * as Curry from "rescript/lib/es6/curry.js";
 import * as Pervasives from "rescript/lib/es6/pervasives.js";
+import * as Belt_Option from "rescript/lib/es6/belt_Option.js";
 import * as Caml_format from "rescript/lib/es6/caml_format.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 
@@ -61,7 +62,7 @@ function attrib(param) {
 
 var attributes = Opal.$great$great(Opal.spaces, Opal.many(Opal.$less$less(attrib, Opal.spaces)));
 
-var partial_arg$1 = Opal.$eq$great(Opal.$great$great(lsb, Opal.many(Opal.letter)), Opal.implode);
+var partial_arg$1 = Opal.$eq$great(Opal.$great$great(lsb, Opal.many1(Opal.letter)), Opal.implode);
 
 var tag = Opal.$eq$great(Opal.$less$less((function (param) {
             return Opal.$great$great$eq(partial_arg$1, (function (name) {
@@ -106,9 +107,9 @@ var tag = Opal.$eq$great(Opal.$less$less((function (param) {
               };
       }));
 
-var bbcodetag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(lsb, Opal.many(Opal.letter)), Opal.implode), rsb);
+var bbcodetag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(lsb, Opal.many1(Opal.letter)), Opal.implode), rsb);
 
-var closedtag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(Opal.$great$great(lsb, slash), Opal.many(Opal.letter)), Opal.implode), rsb);
+var closedtag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(Opal.$great$great(lsb, slash), Opal.many1(Opal.letter)), Opal.implode), rsb);
 
 function item_from_tag(children, tag) {
   var tag_name = tag.name.toLowerCase();
@@ -647,31 +648,163 @@ function parse_bbcode(loop, stck) {
   };
 }
 
-function pqwf(inqOpt, stck) {
-  var inq = inqOpt !== undefined ? Caml_option.valFromOption(inqOpt) : undefined;
-  var partial_arg = Opal.$eq$great(lsb, (function (param) {
-          return {
-                  hd: {
-                    TAG: /* Text */0,
-                    _0: "["
-                  },
+function bbcode_parser(loop) {
+  return function (param) {
+    return Opal.$great$great$eq((function (param) {
+                  return Opal.$great$great$eq((function (param) {
+                                return Opal.$great$great$eq(tag, (function (tg) {
+                                              var partial_arg = Curry._1(loop, undefined);
+                                              return function (param) {
+                                                return Opal.$great$great$eq(partial_arg, (function (it) {
+                                                              var partial_arg = [
+                                                                tg,
+                                                                it
+                                                              ];
+                                                              return function (param) {
+                                                                return Opal.$$return(partial_arg, param);
+                                                              };
+                                                            }), param);
+                                              };
+                                            }), param);
+                              }), (function (param) {
+                                var ai = param[1];
+                                var tg = param[0];
+                                return function (param) {
+                                  return Opal.$great$great$eq(closedtag, (function (ctg) {
+                                                var partial_arg = [
+                                                  tg,
+                                                  ctg,
+                                                  ai
+                                                ];
+                                                return function (param) {
+                                                  return Opal.$$return(partial_arg, param);
+                                                };
+                                              }), param);
+                                };
+                              }), param);
+                }), (function (param) {
+                  var tg = param[0];
+                  if (tg.name !== param[1]) {
+                    return Opal.mzero;
+                  }
+                  var partial_arg = item_from_tag(param[2], tg);
+                  return function (param) {
+                    return Opal.$$return(partial_arg, param);
+                  };
+                }), param);
+  };
+}
+
+var text_parser = Opal.$eq$great(Opal.$eq$great(Opal.many1(Opal.none_of({
+                  hd: /* '[' */91,
                   tl: /* [] */0
+                })), Opal.implode), (function (it) {
+        return {
+                TAG: /* Text */0,
+                _0: it
+              };
+      }));
+
+function ast_parer(param) {
+  var partial_arg = Opal.$eq$great(Opal.$eq$great(lsb, (function (param) {
+              return "[";
+            })), (function (it) {
+          return {
+                  TAG: /* Text */0,
+                  _0: it
                 };
         }));
-  var partial_arg$1;
+  var partial_arg$1 = bbcode_parser(ast_parer);
+  var partial_arg$2 = function (param) {
+    return Opal.$less$pipe$great(text_parser, partial_arg$1, param);
+  };
+  return Opal.many(function (param) {
+              return Opal.$less$pipe$great(partial_arg$2, partial_arg, param);
+            });
+}
+
+function fix_ast(ast) {
+  return List.rev(List.fold_left((function (state, el) {
+                    if (!state) {
+                      return {
+                              hd: el,
+                              tl: state
+                            };
+                    }
+                    var t1 = state.hd;
+                    if (t1.TAG === /* Text */0 && el.TAG === /* Text */0) {
+                      return {
+                              hd: {
+                                TAG: /* Text */0,
+                                _0: t1._0 + el._0
+                              },
+                              tl: state.tl
+                            };
+                    } else {
+                      return {
+                              hd: el,
+                              tl: state
+                            };
+                    }
+                  }), /* [] */0, ast));
+}
+
+function pqwf(inqOpt, stck) {
+  var inq = inqOpt !== undefined ? Caml_option.valFromOption(inqOpt) : undefined;
+  var partial_arg = Opal.$eq$great(Opal.$eq$great(lsb, (function (param) {
+              return "[";
+            })), (function (it) {
+          return {
+                  TAG: /* Text */0,
+                  _0: it
+                };
+        }));
+  var partial_arg$1 = function (param) {
+    return Opal.$great$great$eq(partial_arg, (function (it) {
+                  var partial_arg = pqwf(Caml_option.some(it), stck);
+                  return function (param) {
+                    return Opal.$great$great$eq(partial_arg, (function (it2) {
+                                  var partial_arg = [
+                                    it,
+                                    it2
+                                  ];
+                                  return function (param) {
+                                    return Opal.$$return(partial_arg, param);
+                                  };
+                                }), param);
+                  };
+                }), param);
+  };
+  var partial_arg$2 = function (param) {
+    return Opal.$great$great$eq(partial_arg$1, (function (param) {
+                  var partial_arg_0 = param[0];
+                  var partial_arg_1 = param[1];
+                  var partial_arg = {
+                    hd: partial_arg_0,
+                    tl: partial_arg_1
+                  };
+                  return function (param) {
+                    return Opal.$$return(partial_arg, param);
+                  };
+                }), param);
+  };
+  var partial_arg$3;
   if (inq !== undefined) {
-    partial_arg$1 = (function (param) {
+    partial_arg$3 = (function (param) {
         return Opal.$$return(/* [] */0, param);
       });
   } else {
-    var partial_arg$2 = Opal.$eq$great(Opal.$eq$great(Opal.many(Opal.none_of(/* [] */0)), Opal.implode), (function (it) {
+    var partial_arg$4 = Opal.$eq$great(Opal.$eq$great(Opal.many1(Opal.none_of({
+                      hd: /* '[' */91,
+                      tl: /* [] */0
+                    })), Opal.implode), (function (it) {
             return {
                     TAG: /* Text */0,
                     _0: it
                   };
           }));
-    var partial_arg$3 = function (param) {
-      return Opal.$great$great$eq(partial_arg$2, (function (it) {
+    var partial_arg$5 = function (param) {
+      return Opal.$great$great$eq(partial_arg$4, (function (it) {
                     var partial_arg = pqwf(Caml_option.some(it), stck);
                     return function (param) {
                       return Opal.$great$great$eq(partial_arg, (function (it2) {
@@ -686,8 +819,8 @@ function pqwf(inqOpt, stck) {
                     };
                   }), param);
     };
-    partial_arg$1 = (function (param) {
-        return Opal.$great$great$eq(partial_arg$3, (function (param) {
+    partial_arg$3 = (function (param) {
+        return Opal.$great$great$eq(partial_arg$5, (function (param) {
                       var partial_arg_0 = param[0];
                       var partial_arg_1 = param[1];
                       var partial_arg = {
@@ -700,19 +833,23 @@ function pqwf(inqOpt, stck) {
                     }), param);
       });
   }
-  var partial_arg$4 = parse_bbcode((function (eta) {
+  var partial_arg$6 = parse_bbcode((function (eta) {
           return pqwf(undefined, eta);
         }), stck);
-  var partial_arg$5 = function (param) {
-    return Opal.$less$pipe$great(partial_arg$4, partial_arg$1, param);
+  var partial_arg$7 = function (param) {
+    return Opal.$less$pipe$great(partial_arg$6, partial_arg$3, param);
   };
   return function (param) {
-    return Opal.$less$pipe$great(partial_arg$5, partial_arg, param);
+    return Opal.$less$pipe$great(partial_arg$7, partial_arg$2, param);
   };
 }
 
 function run(str, parser) {
   return Opal.parse(parser, Opal.LazyStream.of_string(str));
+}
+
+function run1(str, parser) {
+  return Belt_Option.map(Opal.parse(parser, Opal.LazyStream.of_string(str)), fix_ast);
 }
 
 var Parse = {
@@ -728,8 +865,13 @@ var Parse = {
   closedtag: closedtag,
   item_from_tag: item_from_tag,
   parse_bbcode: parse_bbcode,
+  bbcode_parser: bbcode_parser,
+  text_parser: text_parser,
+  ast_parer: ast_parer,
+  fix_ast: fix_ast,
   pqwf: pqwf,
-  run: run
+  run: run,
+  run1: run1
 };
 
 function parse(a) {

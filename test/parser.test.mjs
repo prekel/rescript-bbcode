@@ -123,8 +123,33 @@ Zora.test("Parse big ", (function (t) {
       }));
 
 Zora.test("Parse [From ..", (function (t) {
-        var a = BBCode.parse("In near [From [url=https://example.com/]urlcontent[/url]]");
-        console.log(a);
+        var a = BBCode.Parse.run("RStarst [Frsato [url=https://example.com/]urlcontent[/url]]", BBCode.Parse.ast_parer(undefined));
+        console.log(JSON.stringify(a));
+        t.equal(undefined, a, "");
+        
+      }));
+
+Zora.test("Fix ast", (function (t) {
+        var a = BBCode.Parse.fix_ast({
+              hd: {
+                TAG: /* Text */0,
+                _0: "["
+              },
+              tl: {
+                hd: {
+                  TAG: /* Text */0,
+                  _0: "qwf"
+                },
+                tl: /* [] */0
+              }
+            });
+        t.equal(a, {
+              hd: {
+                TAG: /* Text */0,
+                _0: "[qwf"
+              },
+              tl: /* [] */0
+            }, "");
         
       }));
 

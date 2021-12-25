@@ -77,6 +77,19 @@ From [url=https://vndbreview.blogspot.com/2020/08/vn-of-month-july-2008-kara-no-
 
 let () =
   zoraBlock "Parse [From .." (fun t ->
-      let a = parse {|In near [From [url=https://example.com/]urlcontent[/url]]|} in
-      Js.Console.log a)
+      let a =
+        Parse.run
+          {|RStarst [Frsato [url=https://example.com/]urlcontent[/url]]|}
+          (Parse.ast_parer ())
+      in
+      Js.Console.log (Js.Json.stringifyAny a);
+      t |. equal None a "")
+;;
+
+let () =
+  zoraBlock "Fix ast" (fun t ->
+      let s = [ Text "["; Text "qwf" ] in
+      let a = Parse.fix_ast s in
+      let e = [ Text "[qwf" ] in
+      t |. equal a e "")
 ;;
