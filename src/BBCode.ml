@@ -110,7 +110,7 @@ module Parse = struct
   ;;
 
   let bbcodetag = lsb >> many1 letter => implode << rsb
-  let closedtag = lsb >> slash >> many1 letter => implode << rsb
+  let closedtag = lsb >> (slash >> (many1 letter => implode)) << rsb
 
   let item_from_tag children tag =
     match { tag with name = Js.String.toLowerCase tag.name } with
@@ -211,17 +211,15 @@ module Parse = struct
     tag
     >>= (fun tg -> loop () >>= fun it -> return (tg, it))
     >>= (fun (tg, ai) -> closedtag >>= fun ctg -> return (tg, ctg, ai))
-    >>= fun (tg, ctg, ai) -> if tg.name = ctg then return (item_from_tag ai tg) else mzero
+    >>= fun (tg, ctg, ai) ->
+    if tg.name = ctg then return (item_from_tag ai tg) else return (Text "WWW")
   ;;
 
   let text_parser = many1 (none_of [ '[' ]) => implode => fun it -> Text it
-
-  let rec ast_parer () =
-    many
-      (text_parser
-      <|> bbcode_parser ast_parer
-      <|> (lsb => (fun _ -> "[") => fun it -> Text it))
-  ;;
+  let lsb_text = lsb => (fun _ -> "[") => fun it -> Text it
+  let rec ast_parer () = many (text_parser <|> bbcode_parser ast_parer <|> lsb_text)
+  let bbcodeparsermock = bbcode_parser (fun _ -> many letter >> return [ Text "QQQ" ])
+  let parseone = text_parser <|> bbcodeparsermock <|> lsb_text
 
   let fix_ast ast =
     List.fold_left

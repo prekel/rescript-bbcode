@@ -109,7 +109,7 @@ var tag = Opal.$eq$great(Opal.$less$less((function (param) {
 
 var bbcodetag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(lsb, Opal.many1(Opal.letter)), Opal.implode), rsb);
 
-var closedtag = Opal.$less$less(Opal.$eq$great(Opal.$great$great(Opal.$great$great(lsb, slash), Opal.many1(Opal.letter)), Opal.implode), rsb);
+var closedtag = Opal.$less$less(Opal.$great$great(lsb, Opal.$great$great(slash, Opal.$eq$great(Opal.many1(Opal.letter), Opal.implode))), rsb);
 
 function item_from_tag(children, tag) {
   var tag_name = tag.name.toLowerCase();
@@ -684,12 +684,18 @@ function bbcode_parser(loop) {
                               }), param);
                 }), (function (param) {
                   var tg = param[0];
-                  if (tg.name !== param[1]) {
-                    return Opal.mzero;
+                  if (tg.name === param[1]) {
+                    var partial_arg = item_from_tag(param[2], tg);
+                    return function (param) {
+                      return Opal.$$return(partial_arg, param);
+                    };
                   }
-                  var partial_arg = item_from_tag(param[2], tg);
+                  var partial_arg$1 = {
+                    TAG: /* Text */0,
+                    _0: "WWW"
+                  };
                   return function (param) {
-                    return Opal.$$return(partial_arg, param);
+                    return Opal.$$return(partial_arg$1, param);
                   };
                 }), param);
   };
@@ -705,22 +711,42 @@ var text_parser = Opal.$eq$great(Opal.$eq$great(Opal.many1(Opal.none_of({
               };
       }));
 
+var lsb_text = Opal.$eq$great(Opal.$eq$great(lsb, (function (param) {
+            return "[";
+          })), (function (it) {
+        return {
+                TAG: /* Text */0,
+                _0: it
+              };
+      }));
+
 function ast_parer(param) {
-  var partial_arg = Opal.$eq$great(Opal.$eq$great(lsb, (function (param) {
-              return "[";
-            })), (function (it) {
-          return {
-                  TAG: /* Text */0,
-                  _0: it
-                };
-        }));
-  var partial_arg$1 = bbcode_parser(ast_parer);
-  var partial_arg$2 = function (param) {
-    return Opal.$less$pipe$great(text_parser, partial_arg$1, param);
+  var partial_arg = bbcode_parser(ast_parer);
+  var partial_arg$1 = function (param) {
+    return Opal.$less$pipe$great(text_parser, partial_arg, param);
   };
   return Opal.many(function (param) {
-              return Opal.$less$pipe$great(partial_arg$2, partial_arg, param);
+              return Opal.$less$pipe$great(partial_arg$1, lsb_text, param);
             });
+}
+
+var bbcodeparsermock = bbcode_parser(function (param) {
+      var partial_arg = {
+        hd: {
+          TAG: /* Text */0,
+          _0: "QQQ"
+        },
+        tl: /* [] */0
+      };
+      return Opal.$great$great(Opal.many(Opal.letter), (function (param) {
+                    return Opal.$$return(partial_arg, param);
+                  }));
+    });
+
+function parseone(param) {
+  return Opal.$less$pipe$great((function (param) {
+                return Opal.$less$pipe$great(text_parser, bbcodeparsermock, param);
+              }), lsb_text, param);
 }
 
 function fix_ast(ast) {
@@ -867,7 +893,10 @@ var Parse = {
   parse_bbcode: parse_bbcode,
   bbcode_parser: bbcode_parser,
   text_parser: text_parser,
+  lsb_text: lsb_text,
   ast_parer: ast_parer,
+  bbcodeparsermock: bbcodeparsermock,
+  parseone: parseone,
   fix_ast: fix_ast,
   pqwf: pqwf,
   run: run,

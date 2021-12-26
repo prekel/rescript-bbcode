@@ -79,7 +79,7 @@ let () =
   zoraBlock "Parse [From .." (fun t ->
       let a =
         Parse.run
-          {|RStarst [Frsato [url=https://example.com/]urlcontent[/url]]|}
+          "arsar [Frsato [url=https://example.com/]urlcontent[/url]"
           (Parse.ast_parer ())
       in
       Js.Console.log (Js.Json.stringifyAny a);
@@ -92,4 +92,46 @@ let () =
       let a = Parse.fix_ast s in
       let e = [ Text "[qwf" ] in
       t |. equal a e "")
+;;
+
+let () =
+  zoraBlock "Test tag fails" (fun t ->
+      let a = Parse.run "[From asrtoa]" Parse.tag in
+      t |. equal a None "Should be none";
+      let a = Parse.run "[Frsato [url=https://example.com/]urlcontent[/url]]" Parse.tag in
+      t |. equal a None "Should be none";
+      let a = Parse.run "[url=https://example.com/]urlcontent[/url]" Parse.tag in
+      t |. notEqual a None "Should not be none")
+;;
+
+let () =
+  zoraBlock "Test parseone" (fun t ->
+      let a1 =
+        Parse.run
+          "arsar [Frsato [url=https://example.com/]urlcontent[/url]]"
+          Parse.parseone
+      in
+      let e1 = Text "arsar " in
+      t |. equal a1 (Some e1) "";
+      let a2 =
+        Parse.run "[Frsato [url=https://example.com/]urlcontent[/url]]" Parse.parseone
+      in
+      let e2 = Text "[" in
+      t |. equal a2 (Some e2) "";
+      let a3 =
+        Parse.run "Frsato [url=https://example.com/]urlcontent[/url]]" Parse.parseone
+      in
+      let e3 = Text "Frsato " in
+      t |. equal a3 (Some e3) "";
+      let a4 = Parse.run "[url=https://example.com/]urlcontent[/url]]" Parse.parseone in
+      let e4 = LinkNamed { children = [ Text "QQQ" ]; url = "https://example.com/" } in
+      t |. equal a4 (Some e4) "";
+      let a =
+        Parse.run "[url=https://example.com/]urlcontent[/url]" Parse.bbcodeparsermock
+      in
+      let e = LinkNamed { children = [ Text "QQQ" ]; url = "https://example.com/" } in
+      t |. equal a (Some e) "";
+      let a5 = Parse.run "]" Parse.parseone in
+      let e5 = Text "]" in
+      t |. equal a5 (Some e5) "")
 ;;

@@ -123,7 +123,7 @@ Zora.test("Parse big ", (function (t) {
       }));
 
 Zora.test("Parse [From ..", (function (t) {
-        var a = BBCode.Parse.run("RStarst [Frsato [url=https://example.com/]urlcontent[/url]]", BBCode.Parse.ast_parer(undefined));
+        var a = BBCode.Parse.run("arsar [Frsato [url=https://example.com/]urlcontent[/url]", BBCode.Parse.ast_parer(undefined));
         console.log(JSON.stringify(a));
         t.equal(undefined, a, "");
         
@@ -149,6 +149,64 @@ Zora.test("Fix ast", (function (t) {
                 _0: "[qwf"
               },
               tl: /* [] */0
+            }, "");
+        
+      }));
+
+Zora.test("Test tag fails", (function (t) {
+        var a = BBCode.Parse.run("[From asrtoa]", BBCode.Parse.tag);
+        t.equal(a, undefined, "Should be none");
+        var a$1 = BBCode.Parse.run("[Frsato [url=https://example.com/]urlcontent[/url]]", BBCode.Parse.tag);
+        t.equal(a$1, undefined, "Should be none");
+        var a$2 = BBCode.Parse.run("[url=https://example.com/]urlcontent[/url]", BBCode.Parse.tag);
+        t.notEqual(a$2, undefined, "Should not be none");
+        
+      }));
+
+Zora.test("Test parseone", (function (t) {
+        var a1 = BBCode.Parse.run("arsar [Frsato [url=https://example.com/]urlcontent[/url]]", BBCode.Parse.parseone);
+        t.equal(a1, {
+              TAG: /* Text */0,
+              _0: "arsar "
+            }, "");
+        var a2 = BBCode.Parse.run("[Frsato [url=https://example.com/]urlcontent[/url]]", BBCode.Parse.parseone);
+        t.equal(a2, {
+              TAG: /* Text */0,
+              _0: "["
+            }, "");
+        var a3 = BBCode.Parse.run("Frsato [url=https://example.com/]urlcontent[/url]]", BBCode.Parse.parseone);
+        t.equal(a3, {
+              TAG: /* Text */0,
+              _0: "Frsato "
+            }, "");
+        var a4 = BBCode.Parse.run("[url=https://example.com/]urlcontent[/url]]", BBCode.Parse.parseone);
+        t.equal(a4, {
+              TAG: /* LinkNamed */15,
+              children: {
+                hd: {
+                  TAG: /* Text */0,
+                  _0: "QQQ"
+                },
+                tl: /* [] */0
+              },
+              url: "https://example.com/"
+            }, "");
+        var a = BBCode.Parse.run("[url=https://example.com/]urlcontent[/url]", BBCode.Parse.bbcodeparsermock);
+        t.equal(a, {
+              TAG: /* LinkNamed */15,
+              children: {
+                hd: {
+                  TAG: /* Text */0,
+                  _0: "QQQ"
+                },
+                tl: /* [] */0
+              },
+              url: "https://example.com/"
+            }, "");
+        var a5 = BBCode.Parse.run("]", BBCode.Parse.parseone);
+        t.equal(a5, {
+              TAG: /* Text */0,
+              _0: "]"
             }, "");
         
       }));
