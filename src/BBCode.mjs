@@ -653,7 +653,7 @@ function bbcode_parser(loop) {
     return Opal.$great$great$eq((function (param) {
                   return Opal.$great$great$eq((function (param) {
                                 return Opal.$great$great$eq(tag, (function (tg) {
-                                              var partial_arg = Curry._1(loop, undefined);
+                                              var partial_arg = Curry._1(loop, true);
                                               return function (param) {
                                                 return Opal.$great$great$eq(partial_arg, (function (it) {
                                                               var partial_arg = [
@@ -720,13 +720,20 @@ var lsb_text = Opal.$eq$great(Opal.$eq$great(lsb, (function (param) {
               };
       }));
 
-function ast_parer(param) {
-  var partial_arg = bbcode_parser(ast_parer);
-  var partial_arg$1 = function (param) {
-    return Opal.$less$pipe$great(text_parser, partial_arg, param);
+function ast_parer(is_open) {
+  var partial_arg = is_open ? (function (param) {
+        return Opal.$less$pipe$great((function (param) {
+                      return Opal.$great$great$eq(closedtag, (function (param) {
+                                    return Opal.mzero;
+                                  }), param);
+                    }), lsb_text, param);
+      }) : lsb_text;
+  var partial_arg$1 = bbcode_parser(ast_parer);
+  var partial_arg$2 = function (param) {
+    return Opal.$less$pipe$great(text_parser, partial_arg$1, param);
   };
   return Opal.many(function (param) {
-              return Opal.$less$pipe$great(partial_arg$1, lsb_text, param);
+              return Opal.$less$pipe$great(partial_arg$2, partial_arg, param);
             });
 }
 

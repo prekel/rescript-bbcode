@@ -123,7 +123,7 @@ Zora.test("Parse big ", (function (t) {
       }));
 
 Zora.test("Parse [From ..", (function (t) {
-        var a = BBCode.Parse.run("arsar [Frsato [url=https://example.com/]urlcontent[/url]", BBCode.Parse.ast_parer(undefined));
+        var a = BBCode.Parse.run("arsar [Frsato [url=https://example.com/]urlcontent[/url]", BBCode.Parse.ast_parer(false));
         console.log(JSON.stringify(a));
         t.equal(undefined, a, "");
         

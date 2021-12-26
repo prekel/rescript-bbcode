@@ -80,7 +80,7 @@ let () =
       let a =
         Parse.run
           "arsar [Frsato [url=https://example.com/]urlcontent[/url]"
-          (Parse.ast_parer ())
+          (Parse.ast_parer false)
       in
       Js.Console.log (Js.Json.stringifyAny a);
       t |. equal None a "")
