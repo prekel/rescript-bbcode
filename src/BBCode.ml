@@ -316,7 +316,7 @@ let rec traverse (f : ast -> ast) =
   | YouTube { id } -> YouTube { id }
 ;;
 
-let parse x =
-  parse x |. Belt.Option.map (fun a -> a |> List.map (traverse fix_ast) |> Array.of_list)
+let parse x : ast option =
+  parse x |. Belt.Option.map (fun a -> a |> List.map (traverse fix_ast))
   [@@genType]
 ;;

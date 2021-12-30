@@ -1020,7 +1020,7 @@ function traverse(f) {
 
 function parse(x) {
   return Belt_Option.map(run1(x, ast_parer(false)), (function (a) {
-                return $$Array.of_list(List.map(traverse(fix_ast$1), a));
+                return List.map(traverse(fix_ast$1), a);
               }));
 }
 
