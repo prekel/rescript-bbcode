@@ -91,7 +91,43 @@ let () =
         ; LinkNamed { children = [ Text "urlcontent" ]; url = "https://example.com/" }
         ]
       in
-      t |. equal (Some e) a "")
+      t |. equal a (Some e) "")
+;;
+
+let () =
+  zoraBlock "Parse [From .. 2" (fun t ->
+      let a =
+        Parse.run
+          {|arsar workers.... 
+
+          [From [url=http://www.erogeshop.com/product_info.php/products_id/1]Er[/url]]|}
+          (Parse.ast_parer false)
+      in
+      (* Js.Console.log (Js.Json.stringifyAny (match a with | Some a -> Array.of_list a |
+         None -> assert false)); *)
+      let e =
+        [ Text "arsar workers.... \n\n          "
+        ; Text "["
+        ; Text "From "
+        ; LinkNamed
+            { children = [ Text "Er" ]
+            ; url = "http://www.erogeshop.com/product_info.php/products_id/1"
+            }
+        ; Text "]"
+        ]
+      in
+      t |. equal a (Some e) "";
+      let fixed_a = a |. Belt.Option.map Parse.fix_ast in
+      let fixed_e =
+        [ Text "arsar workers.... \n\n          [From "
+        ; LinkNamed
+            { children = [ Text "Er" ]
+            ; url = "http://www.erogeshop.com/product_info.php/products_id/1"
+            }
+        ; Text "]"
+        ]
+      in
+      t |. equal fixed_a (Some fixed_e) "")
 ;;
 
 let () =
@@ -142,4 +178,18 @@ let () =
       let a5 = Parse.run "]" Parse.parseone in
       let e5 = Text "]" in
       t |. equal a5 (Some e5) "")
+;;
+
+let () =
+  zoraBlock "Test 7" (fun t ->
+      let txt =
+        {|This story is about a young boy named Tohno Shiki who, after experiencing a traumatic accident, wakes up in the hospital with the ability to see lines and cracks in every surface and being. These lines, when traced with any sharp or blunt edge, will be permanently cut. As he is forced to see these lines everywhere, Shiki is distraught until he meets a mage girl who gives him glasses that allow him to live a normal life.
+
+        Years later, after living in a relative's home, the death of his father has him summoned back to the mansion he left years ago. There he must learn to live with his younger sister and two maid girls. 
+        
+        One day Shiki's life takes a turn for the worse when, on the way to school, he meets a blonde woman and he's overcome with the urge to kill her.|}
+      in
+      let a = parse txt in
+      let e = [ Text txt ] in
+      t |. equal a (Some e) "")
 ;;

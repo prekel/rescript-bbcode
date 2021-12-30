@@ -2,6 +2,7 @@
 
 import * as Zora from "zora";
 import * as BBCode from "../src/BBCode.mjs";
+import * as Belt_Option from "rescript/lib/es6/belt_Option.js";
 
 Zora.test("Parse 1", (function (t) {
         var a = BBCode.Parse.run("[tag]ars[b]art[/b][/tag]", BBCode.Parse.pqwf(undefined, /* [] */0));
@@ -124,7 +125,7 @@ Zora.test("Parse big ", (function (t) {
 
 Zora.test("Parse [From ..", (function (t) {
         var a = BBCode.Parse.run("arsar [Frsato [url=https://example.com/]urlcontent[/url]", BBCode.Parse.ast_parer(false));
-        t.equal({
+        t.equal(a, {
               hd: {
                 TAG: /* Text */0,
                 _0: "arsar "
@@ -155,7 +156,77 @@ Zora.test("Parse [From ..", (function (t) {
                   }
                 }
               }
-            }, a, "");
+            }, "");
+        
+      }));
+
+Zora.test("Parse [From .. 2", (function (t) {
+        var a = BBCode.Parse.run("arsar workers.... \n\n          [From [url=http://www.erogeshop.com/product_info.php/products_id/1]Er[/url]]", BBCode.Parse.ast_parer(false));
+        t.equal(a, {
+              hd: {
+                TAG: /* Text */0,
+                _0: "arsar workers.... \n\n          "
+              },
+              tl: {
+                hd: {
+                  TAG: /* Text */0,
+                  _0: "["
+                },
+                tl: {
+                  hd: {
+                    TAG: /* Text */0,
+                    _0: "From "
+                  },
+                  tl: {
+                    hd: {
+                      TAG: /* LinkNamed */15,
+                      children: {
+                        hd: {
+                          TAG: /* Text */0,
+                          _0: "Er"
+                        },
+                        tl: /* [] */0
+                      },
+                      url: "http://www.erogeshop.com/product_info.php/products_id/1"
+                    },
+                    tl: {
+                      hd: {
+                        TAG: /* Text */0,
+                        _0: "]"
+                      },
+                      tl: /* [] */0
+                    }
+                  }
+                }
+              }
+            }, "");
+        var fixed_a = Belt_Option.map(a, BBCode.Parse.fix_ast);
+        t.equal(fixed_a, {
+              hd: {
+                TAG: /* Text */0,
+                _0: "arsar workers.... \n\n          [From "
+              },
+              tl: {
+                hd: {
+                  TAG: /* LinkNamed */15,
+                  children: {
+                    hd: {
+                      TAG: /* Text */0,
+                      _0: "Er"
+                    },
+                    tl: /* [] */0
+                  },
+                  url: "http://www.erogeshop.com/product_info.php/products_id/1"
+                },
+                tl: {
+                  hd: {
+                    TAG: /* Text */0,
+                    _0: "]"
+                  },
+                  tl: /* [] */0
+                }
+              }
+            }, "");
         
       }));
 
@@ -238,6 +309,21 @@ Zora.test("Test parseone", (function (t) {
               TAG: /* Text */0,
               _0: "]"
             }, "");
+        
+      }));
+
+Zora.test("Test 7", (function (t) {
+        var txt = "This story is about a young boy named Tohno Shiki who, after experiencing a traumatic accident, wakes up in the hospital with the ability to see lines and cracks in every surface and being. These lines, when traced with any sharp or blunt edge, will be permanently cut. As he is forced to see these lines everywhere, Shiki is distraught until he meets a mage girl who gives him glasses that allow him to live a normal life.\n\n        Years later, after living in a relative's home, the death of his father has him summoned back to the mansion he left years ago. There he must learn to live with his younger sister and two maid girls. \n        \n        One day Shiki's life takes a turn for the worse when, on the way to school, he meets a blonde woman and he's overcome with the urge to kill her.";
+        var a = BBCode.parse(txt);
+        var e_0 = {
+          TAG: /* Text */0,
+          _0: txt
+        };
+        var e = {
+          hd: e_0,
+          tl: /* [] */0
+        };
+        t.equal(a, e, "");
         
       }));
 
