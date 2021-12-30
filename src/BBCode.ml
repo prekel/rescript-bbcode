@@ -222,7 +222,7 @@ module Parse = struct
     many
       (text_parser
       <|> bbcode_parser ast_parer
-      <|> if is_open then closedtag >>= (fun _ -> mzero) <|> lsb_text else lsb_text)
+      <|> if is_open then closedtag >>= fun _ -> mzero else lsb_text)
   ;;
 
   let bbcodeparsermock = bbcode_parser (fun _ -> many letter >> return [ Text "QQQ" ])
@@ -258,9 +258,9 @@ module Parse = struct
 
   let run str parser = str |> Opal.LazyStream.of_string |> Opal.parse parser
 
-  let run1 str parser =
+  let run1 str parser : ast option =
     str |> Opal.LazyStream.of_string |> Opal.parse parser |. Belt.Option.map fix_ast
   ;;
 end
 
-let parse a = Parse.run a (Parse.pqwf []) [@@genType]
+let parse a = Parse.run1 a (Parse.pqwf []) [@@genType]

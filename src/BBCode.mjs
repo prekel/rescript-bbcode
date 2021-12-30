@@ -722,11 +722,9 @@ var lsb_text = Opal.$eq$great(Opal.$eq$great(lsb, (function (param) {
 
 function ast_parer(is_open) {
   var partial_arg = is_open ? (function (param) {
-        return Opal.$less$pipe$great((function (param) {
-                      return Opal.$great$great$eq(closedtag, (function (param) {
-                                    return Opal.mzero;
-                                  }), param);
-                    }), lsb_text, param);
+        return Opal.$great$great$eq(closedtag, (function (param) {
+                      return Opal.mzero;
+                    }), param);
       }) : lsb_text;
   var partial_arg$1 = bbcode_parser(ast_parer);
   var partial_arg$2 = function (param) {
@@ -911,7 +909,7 @@ var Parse = {
 };
 
 function parse(a) {
-  return run(a, pqwf(undefined, /* [] */0));
+  return run1(a, pqwf(undefined, /* [] */0));
 }
 
 export {

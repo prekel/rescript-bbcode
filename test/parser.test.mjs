@@ -124,8 +124,38 @@ Zora.test("Parse big ", (function (t) {
 
 Zora.test("Parse [From ..", (function (t) {
         var a = BBCode.Parse.run("arsar [Frsato [url=https://example.com/]urlcontent[/url]", BBCode.Parse.ast_parer(false));
-        console.log(JSON.stringify(a));
-        t.equal(undefined, a, "");
+        t.equal({
+              hd: {
+                TAG: /* Text */0,
+                _0: "arsar "
+              },
+              tl: {
+                hd: {
+                  TAG: /* Text */0,
+                  _0: "["
+                },
+                tl: {
+                  hd: {
+                    TAG: /* Text */0,
+                    _0: "Frsato "
+                  },
+                  tl: {
+                    hd: {
+                      TAG: /* LinkNamed */15,
+                      children: {
+                        hd: {
+                          TAG: /* Text */0,
+                          _0: "urlcontent"
+                        },
+                        tl: /* [] */0
+                      },
+                      url: "https://example.com/"
+                    },
+                    tl: /* [] */0
+                  }
+                }
+              }
+            }, a, "");
         
       }));
 

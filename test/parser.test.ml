@@ -82,8 +82,16 @@ let () =
           "arsar [Frsato [url=https://example.com/]urlcontent[/url]"
           (Parse.ast_parer false)
       in
-      Js.Console.log (Js.Json.stringifyAny a);
-      t |. equal None a "")
+      (* Js.Console.log (Js.Json.stringifyAny (match a with | Some a -> Array.of_list a |
+         None -> assert false)); *)
+      let e =
+        [ Text "arsar "
+        ; Text "["
+        ; Text "Frsato "
+        ; LinkNamed { children = [ Text "urlcontent" ]; url = "https://example.com/" }
+        ]
+      in
+      t |. equal (Some e) a "")
 ;;
 
 let () =
