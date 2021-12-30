@@ -494,7 +494,7 @@ function item_from_tag(children, tag) {
 }
 
 function traverse(f, ast) {
-  return Belt_List.map(ast, (function (txt) {
+  return Belt_List.map(Curry._1(f, ast), (function (txt) {
                 switch (txt.TAG | 0) {
                   case /* Text */0 :
                       return {
@@ -656,21 +656,34 @@ function traverse(f, ast) {
 }
 
 function fix_ast(ast) {
-  return Belt_List.reverse(Belt_List.reduce(/* [] */0, ast, (function (state, el) {
-                    if (!state) {
-                      return {
-                              hd: el,
-                              tl: state
-                            };
+  return Belt_List.reverse(Belt_List.reduce(ast, /* [] */0, (function (state, el) {
+                    if (state) {
+                      var t1 = state.hd;
+                      if (t1.TAG === /* Text */0) {
+                        if (el.TAG === /* Text */0) {
+                          return {
+                                  hd: {
+                                    TAG: /* Text */0,
+                                    _0: t1._0 + el._0
+                                  },
+                                  tl: state.tl
+                                };
+                        } else {
+                          return {
+                                  hd: el,
+                                  tl: state
+                                };
+                        }
+                      }
+                      
                     }
-                    var t1 = state.hd;
-                    if (t1.TAG === /* Text */0 && el.TAG === /* Text */0) {
+                    if (el.TAG === /* Text */0) {
                       return {
                               hd: {
                                 TAG: /* Text */0,
-                                _0: t1._0 + el._0
+                                _0: el._0
                               },
-                              tl: state.tl
+                              tl: state
                             };
                     } else {
                       return {

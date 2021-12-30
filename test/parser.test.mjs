@@ -10,6 +10,30 @@ Zora.test("many' test", (function (t) {
         
       }));
 
+Zora.test("ast_fix test", (function (t) {
+        var a = BBCode.fix_ast({
+              hd: {
+                TAG: /* Text */0,
+                _0: "123"
+              },
+              tl: {
+                hd: {
+                  TAG: /* Text */0,
+                  _0: "456"
+                },
+                tl: /* [] */0
+              }
+            });
+        t.equal(a, {
+              hd: {
+                TAG: /* Text */0,
+                _0: "123456"
+              },
+              tl: /* [] */0
+            }, "");
+        
+      }));
+
 export {
   
 }

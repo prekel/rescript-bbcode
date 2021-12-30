@@ -167,7 +167,7 @@ let item_from_tag children tag =
 
 let rec traverse f ast =
   let fix_ast a = a |> f |> traverse f in
-  Belt.List.map ast (function
+  Belt.List.map (f ast) (function
       | Text txt -> Text txt
       | Bold { children } -> Bold { children = fix_ast children }
       | Italic { children } -> Italic { children = fix_ast children }
@@ -218,9 +218,10 @@ let rec traverse f ast =
 ;;
 
 let fix_ast ast =
-  Belt.List.reduce [] ast (fun state el ->
+  Belt.List.reduce ast [] (fun state el ->
       match state, el with
       | Text t1 :: o, Text t2 -> Text (t1 ^ t2) :: o
+      | o, Text t2 -> Text t2 :: o
       | _ -> el :: state)
   |> Belt.List.reverse
 ;;
