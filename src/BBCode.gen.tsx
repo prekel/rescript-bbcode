@@ -113,4 +113,4 @@ export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
     : {tag:"YouTube", value:ArrayItem}})
 };
 
-export const parse: (x:string) => (null | undefined | ast) = BBCodeBS.parse;
+export const parse: (text:string) => (null | undefined | ast) = BBCodeBS.parse;
