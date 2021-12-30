@@ -6,8 +6,6 @@
 import * as BBCodeBS__Es6Import from './BBCode.mjs';
 const BBCodeBS: any = BBCodeBS__Es6Import;
 
-import type {list} from '../src/ shims /ReasonPervasives.shim';
-
 // tslint:disable-next-line:interface-over-type-literal
 export type tag = {
   readonly name: string; 
@@ -24,13 +22,13 @@ export type ast_item =
   | { tag: "Strikethrough"; value: { readonly children: ast } }
   | { tag: "FontSize"; value: { readonly children: ast; readonly size: number } }
   | { tag: "FontColor"; value: { readonly children: ast; readonly color: string } }
-  | { tag: "CenterText"; value: { readonly children: ast } }
-  | { tag: "LeftAlignText"; value: { readonly children: ast } }
-  | { tag: "RightAlignText"; value: { readonly children: ast } }
+  | { tag: "CenterAlign"; value: { readonly children: ast } }
+  | { tag: "LeftAlign"; value: { readonly children: ast } }
+  | { tag: "RightAlign"; value: { readonly children: ast } }
   | { tag: "Quote"; value: { readonly children: ast } }
   | { tag: "QuoteNamed"; value: { readonly children: ast; readonly quote: string } }
   | { tag: "Spoiler"; value: { readonly children: ast } }
-  | { tag: "SpoilerNamed"; value: { readonly children: ast; readonly spoiler: string } }
+  | { tag: "SpoilerNamed"; value: { readonly children: ast; readonly name: string } }
   | { tag: "Link"; value: { readonly url: string } }
   | { tag: "LinkNamed"; value: { readonly children: ast; readonly url: string } }
   | { tag: "Image"; value: { readonly url: string } }
@@ -48,7 +46,7 @@ export type ast_item =
   | { tag: "YouTube"; value: { readonly id: string } };
 
 // tslint:disable-next-line:interface-over-type-literal
-export type ast = list<ast_item>;
+export type ast = ast_item[];
 
 // tslint:disable-next-line:interface-over-type-literal
 export type list_item = { readonly children: ast };
@@ -60,9 +58,11 @@ export type table_row = { readonly cells: table_cell[] };
 export type table_cell = 
     { readonly children: ast; readonly variant: "Heading" | "Content" };
 
-export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
-  const result = BBCodeBS.ast_to_array(Arg1);
-  return result.map(function _element(ArrayItem: any) { return ArrayItem.TAG===0
+export const parse: (text:string) => (null | undefined | ast) = function (Arg1: any) {
+  const result = 
+/* WARNING: circular type ast. Only shallow converter applied. */
+  BBCodeBS.parse(Arg1);
+  return (result == null ? result : result.map(function _element(ArrayItem: any) { return ArrayItem.TAG===0
     ? {tag:"Text", value:ArrayItem._0}
     : ArrayItem.TAG===1
     ? {tag:"Bold", value:ArrayItem}
@@ -77,11 +77,11 @@ export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
     : ArrayItem.TAG===6
     ? {tag:"FontColor", value:ArrayItem}
     : ArrayItem.TAG===7
-    ? {tag:"CenterText", value:ArrayItem}
+    ? {tag:"CenterAlign", value:ArrayItem}
     : ArrayItem.TAG===8
-    ? {tag:"LeftAlignText", value:ArrayItem}
+    ? {tag:"LeftAlign", value:ArrayItem}
     : ArrayItem.TAG===9
-    ? {tag:"RightAlignText", value:ArrayItem}
+    ? {tag:"RightAlign", value:ArrayItem}
     : ArrayItem.TAG===10
     ? {tag:"Quote", value:ArrayItem}
     : ArrayItem.TAG===11
@@ -110,7 +110,5 @@ export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
     ? {tag:"Table", value:{rows:ArrayItem.rows.map(function _element(ArrayItem2: any) { return {cells:ArrayItem2.cells.map(function _element(ArrayItem3: any) { return ArrayItem3})}})}}
     : ArrayItem.TAG===23
     ? {tag:"Other", value:ArrayItem}
-    : {tag:"YouTube", value:ArrayItem}})
+    : {tag:"YouTube", value:ArrayItem}}))
 };
-
-export const parse: (a:string) => (null | undefined | ast) = BBCodeBS.parse;

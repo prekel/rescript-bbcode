@@ -46,7 +46,7 @@ open BBCode
    From
    [url=https://vndbreview.blogspot.com/2020/08/vn-of-month-july-2008-kara-no-shoujo.html]vndbreview[/url]|}
    in ()) ;; *)
-let () =
+(* let () =
   zoraBlock "Parse [From .." (fun t ->
       let a = parse "arsar [Frsato [url=https://example.com/]urlcontent[/url]" in
       (* Js.Console.log (Js.Json.stringifyAny (match a with | Some a -> Array.of_list a |
@@ -78,7 +78,7 @@ let () =
       let txt = "12345" in
       let a1 = run txt (many' Opal.digit 10 => implode) in
       t |. equal a1 (Some "12345") "")
-;;
+;; *)
 
 (* let () = zoraBlock "Parse [From .. 2" (fun t -> let a = Parse.run {|arsar workers....
    [From [url=http://www.erogeshop.com/product_info.php/products_id/1]Er[/url]]|}
