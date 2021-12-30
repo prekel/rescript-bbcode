@@ -6,6 +6,8 @@
 import * as BBCodeBS__Es6Import from './BBCode.mjs';
 const BBCodeBS: any = BBCodeBS__Es6Import;
 
+import type {list} from '../src/ shims /ReasonPervasives.shim';
+
 // tslint:disable-next-line:interface-over-type-literal
 export type tag = {
   readonly name: string; 
@@ -46,7 +48,7 @@ export type ast_item =
   | { tag: "YouTube"; value: { readonly id: string } };
 
 // tslint:disable-next-line:interface-over-type-literal
-export type ast = ast_item[];
+export type ast = list<ast_item>;
 
 // tslint:disable-next-line:interface-over-type-literal
 export type list_item = { readonly children: ast };
@@ -58,10 +60,61 @@ export type table_row = { readonly cells: table_cell[] };
 export type table_cell = 
     { readonly children: ast; readonly variant: "Heading" | "Content" };
 
-export const parse: (text:string) => (null | undefined | ast) = function (Arg1: any) {
-  const result = 
-/* WARNING: circular type ast. Only shallow converter applied. */
-  BBCodeBS.parse(Arg1);
+export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
+  const result = BBCodeBS.ast_to_array(Arg1);
+  return result.map(function _element(ArrayItem: any) { return ArrayItem.TAG===0
+    ? {tag:"Text", value:ArrayItem._0}
+    : ArrayItem.TAG===1
+    ? {tag:"Bold", value:ArrayItem}
+    : ArrayItem.TAG===2
+    ? {tag:"Italic", value:ArrayItem}
+    : ArrayItem.TAG===3
+    ? {tag:"Underline", value:ArrayItem}
+    : ArrayItem.TAG===4
+    ? {tag:"Strikethrough", value:ArrayItem}
+    : ArrayItem.TAG===5
+    ? {tag:"FontSize", value:ArrayItem}
+    : ArrayItem.TAG===6
+    ? {tag:"FontColor", value:ArrayItem}
+    : ArrayItem.TAG===7
+    ? {tag:"CenterAlign", value:ArrayItem}
+    : ArrayItem.TAG===8
+    ? {tag:"LeftAlign", value:ArrayItem}
+    : ArrayItem.TAG===9
+    ? {tag:"RightAlign", value:ArrayItem}
+    : ArrayItem.TAG===10
+    ? {tag:"Quote", value:ArrayItem}
+    : ArrayItem.TAG===11
+    ? {tag:"QuoteNamed", value:ArrayItem}
+    : ArrayItem.TAG===12
+    ? {tag:"Spoiler", value:ArrayItem}
+    : ArrayItem.TAG===13
+    ? {tag:"SpoilerNamed", value:ArrayItem}
+    : ArrayItem.TAG===14
+    ? {tag:"Link", value:ArrayItem}
+    : ArrayItem.TAG===15
+    ? {tag:"LinkNamed", value:ArrayItem}
+    : ArrayItem.TAG===16
+    ? {tag:"Image", value:ArrayItem}
+    : ArrayItem.TAG===17
+    ? {tag:"ImageResized", value:ArrayItem}
+    : ArrayItem.TAG===18
+    ? {tag:"List", value:{items:ArrayItem.items.map(function _element(ArrayItem1: any) { return ArrayItem1}), variant:ArrayItem.variant}}
+    : ArrayItem.TAG===19
+    ? {tag:"Code", value:ArrayItem}
+    : ArrayItem.TAG===20
+    ? {tag:"CodeLanguageSpecific", value:ArrayItem}
+    : ArrayItem.TAG===21
+    ? {tag:"Preformatted", value:ArrayItem}
+    : ArrayItem.TAG===22
+    ? {tag:"Table", value:{rows:ArrayItem.rows.map(function _element(ArrayItem2: any) { return {cells:ArrayItem2.cells.map(function _element(ArrayItem3: any) { return ArrayItem3})}})}}
+    : ArrayItem.TAG===23
+    ? {tag:"Other", value:ArrayItem}
+    : {tag:"YouTube", value:ArrayItem}})
+};
+
+export const parse: (x:string) => (null | undefined | ast_item[]) = function (Arg1: any) {
+  const result = BBCodeBS.parse(Arg1);
   return (result == null ? result : result.map(function _element(ArrayItem: any) { return ArrayItem.TAG===0
     ? {tag:"Text", value:ArrayItem._0}
     : ArrayItem.TAG===1
