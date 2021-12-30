@@ -1,35 +1,37 @@
 {
-    "name": "rescript-bbcode",
-    "sources": [
-        {
-            "dir": "src",
-            "subdirs": true
-        },
-        {
-            "dir": "test",
-            "subdirs": true,
-            "type": "dev"
-        }
-    ],
-    "package-specs": [
-        {
-            "module": "es6",
-            "in-source": true
-        }
-    ],
-    "suffix": ".mjs",
-    "bs-dependencies": [
-        "@dusty-phillips/rescript-zora"
-    ],
-    "gentypeconfig": {
-        "language": "typescript",
-        "shims": {
-            "ReasonPervasives": "ReasonPervasives",},
-        "generatedFileExtension": ".gen.tsx",
-        "module": "es6",
-        "debug": {
-            "all": false,
-            "basic": false
-        }
+  "name": "rescript-bbcode",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "test",
+      "subdirs": true,
+      "type": "dev"
     }
+  ],
+  "package-specs": [
+    {
+      "module": "es6",
+      "in-source": true
+    }
+  ],
+  "suffix": ".mjs",
+  "bs-dependencies": [
+    "@dusty-phillips/rescript-zora"
+  ],
+  "external-stdlib": "@rescript/std",
+  "gentypeconfig": {
+    "language": "typescript",
+    "shims": {
+      "ReasonPervasives": "ReasonPervasives"
+    },
+    "generatedFileExtension": ".gen.tsx",
+    "module": "es6",
+    "debug": {
+      "all": false,
+      "basic": false
+    }
+  }
 }

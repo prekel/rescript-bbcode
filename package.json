@@ -1,6 +1,6 @@
 {
-  "name": "rescript-bbcode",
-  "version": "0.0.1",
+  "name": "@prekel/rescript-bbcode",
+  "version": "0.0.3",
   "description": "",
   "type": "module",
   "scripts": {
@@ -24,5 +24,7 @@
     "pta": "^1.0.1",
     "rescript": "^9.1.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@rescript/std": "^9.1.3"
+  }
 }
