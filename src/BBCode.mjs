@@ -684,27 +684,48 @@ function bbcode_parser(loop) {
                               }), param);
                 }), (function (param) {
                   var tg = param[0];
-                  if (tg.name === param[1]) {
-                    var partial_arg = item_from_tag(param[2], tg);
-                    return function (param) {
-                      return Opal.$$return(partial_arg, param);
-                    };
+                  if (tg.name !== param[1]) {
+                    return Opal.mzero;
                   }
-                  var partial_arg$1 = {
-                    TAG: /* Text */0,
-                    _0: "WWW"
-                  };
+                  var partial_arg = item_from_tag(param[2], tg);
                   return function (param) {
-                    return Opal.$$return(partial_arg$1, param);
+                    return Opal.$$return(partial_arg, param);
                   };
                 }), param);
   };
 }
 
-var text_parser = Opal.$eq$great(Opal.$eq$great(Opal.many1(Opal.none_of({
+function many$p(x, c) {
+  if (c !== -1) {
+    return Opal.option(/* [] */0, (function (param) {
+                  return Opal.$great$great$eq(x, (function (r) {
+                                var partial_arg = many$p(x, c - 1 | 0);
+                                return function (param) {
+                                  return Opal.$great$great$eq(partial_arg, (function (rs) {
+                                                var partial_arg = {
+                                                  hd: r,
+                                                  tl: rs
+                                                };
+                                                return function (param) {
+                                                  return Opal.$$return(partial_arg, param);
+                                                };
+                                              }), param);
+                                };
+                              }), param);
+                }));
+  } else {
+    return Opal.mzero;
+  }
+}
+
+function many1$p(x, c) {
+  return Opal.$less$tilde$great(x, many$p(x, c - 1 | 0));
+}
+
+var text_parser = Opal.$eq$great(Opal.$eq$great(many1$p(Opal.none_of({
                   hd: /* '[' */91,
                   tl: /* [] */0
-                })), Opal.implode), (function (it) {
+                }), 10), Opal.implode), (function (it) {
         return {
                 TAG: /* Text */0,
                 _0: it
@@ -747,12 +768,6 @@ var bbcodeparsermock = bbcode_parser(function (param) {
                     return Opal.$$return(partial_arg, param);
                   }));
     });
-
-function parseone(param) {
-  return Opal.$less$pipe$great((function (param) {
-                return Opal.$less$pipe$great(text_parser, bbcodeparsermock, param);
-              }), lsb_text, param);
-}
 
 function fix_ast(ast) {
   return List.rev(List.fold_left((function (state, el) {
@@ -897,11 +912,12 @@ var Parse = {
   item_from_tag: item_from_tag,
   parse_bbcode: parse_bbcode,
   bbcode_parser: bbcode_parser,
+  many$p: many$p,
+  many1$p: many1$p,
   text_parser: text_parser,
   lsb_text: lsb_text,
   ast_parer: ast_parer,
   bbcodeparsermock: bbcodeparsermock,
-  parseone: parseone,
   fix_ast: fix_ast,
   pqwf: pqwf,
   run: run,
@@ -909,7 +925,7 @@ var Parse = {
 };
 
 function parse(a) {
-  return run1(a, pqwf(undefined, /* [] */0));
+  return run1(a, ast_parer(false));
 }
 
 export {

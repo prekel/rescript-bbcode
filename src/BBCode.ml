@@ -211,11 +211,17 @@ module Parse = struct
     tag
     >>= (fun tg -> loop true >>= fun it -> return (tg, it))
     >>= (fun (tg, ai) -> closedtag >>= fun ctg -> return (tg, ctg, ai))
-    >>= fun (tg, ctg, ai) ->
-    if tg.name = ctg then return (item_from_tag ai tg) else return (Text "WWW")
+    >>= fun (tg, ctg, ai) -> if tg.name = ctg then return (item_from_tag ai tg) else mzero
   ;;
 
-  let text_parser = many1 (none_of [ '[' ]) => implode => fun it -> Text it
+  let rec many' x c =
+    match c with
+    | -1 -> mzero
+    | _ -> option [] (x >>= fun r -> many' x (c - 1) >>= fun rs -> return (r :: rs))
+  ;;
+
+  let rec many1' x c = x <~> many' x (c - 1)
+  let text_parser = many1' (none_of [ '[' ]) 10 => implode => fun it -> Text it
   let lsb_text = lsb => (fun _ -> "[") => fun it -> Text it
 
   let rec ast_parer is_open =
@@ -226,7 +232,8 @@ module Parse = struct
   ;;
 
   let bbcodeparsermock = bbcode_parser (fun _ -> many letter >> return [ Text "QQQ" ])
-  let parseone = text_parser <|> bbcodeparsermock <|> lsb_text
+
+  (* let parseone = text_parser <|> bbcodeparsermock <|> lsb_text *)
 
   let fix_ast ast =
     List.fold_left
@@ -263,4 +270,4 @@ module Parse = struct
   ;;
 end
 
-let parse a = Parse.run1 a (Parse.pqwf []) [@@genType]
+let parse a = Parse.run1 a (Parse.ast_parer false) [@@genType]
