@@ -895,9 +895,9 @@ function ast_parser(is_open) {
   var partial_arg$2 = function (param) {
     return Opal.$less$pipe$great(text_parser, partial_arg$1, param);
   };
-  return Opal.many(function (param) {
-              return Opal.$less$pipe$great(partial_arg$2, partial_arg, param);
-            });
+  return many$p(250, (function (param) {
+                return Opal.$less$pipe$great(partial_arg$2, partial_arg, param);
+              }));
 }
 
 function run(str, parser) {

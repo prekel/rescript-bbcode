@@ -6,4 +6,4 @@ With changes:
 
  - removed `let*` operator
  - reformatted 
- - remove `monad` type
+ - removed `monad` type

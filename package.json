@@ -1,7 +1,7 @@
 {
   "name": "@prekel/rescript-bbcode",
-  "version": "0.0.7",
-  "description": "",
+  "version": "0.0.8",
+  "description": "BBCode parser written in ReScript (OCaml) with TypeScript typings.",
   "type": "module",
   "scripts": {
     "res:build": "rescript",

@@ -277,7 +277,7 @@ module Parse = struct
     >>= fun (tg, ctg, ai) -> if tg.name = ctg then return (item_from_tag ai tg) else mzero
 
   and ast_parser is_open =
-    many
+    many' 250
       (text_parser
       <|> bbcode_parser ()
       <|> if is_open then closedtag >>= fun _ -> mzero else lsb_text)

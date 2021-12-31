@@ -6,7 +6,7 @@
 import * as BBCodeBS__Es6Import from './BBCode.mjs';
 const BBCodeBS: any = BBCodeBS__Es6Import;
 
-import type {list} from '../src/ shims /ReasonPervasives.shim';
+import type {list} from '../src/shims/ReasonPervasives.shim';
 
 // tslint:disable-next-line:interface-over-type-literal
 export type tag = {
