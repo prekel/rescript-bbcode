@@ -6,8 +6,6 @@
 import * as BBCodeBS__Es6Import from './BBCode.mjs';
 const BBCodeBS: any = BBCodeBS__Es6Import;
 
-import type {list} from '../src/shims/ReasonPervasives.shim';
-
 // tslint:disable-next-line:interface-over-type-literal
 export type tag = {
   readonly name: string; 
@@ -47,8 +45,9 @@ export type ast_item =
   | { tag: "Other"; value: { readonly children: ast; readonly tag: tag } }
   | { tag: "YouTube"; value: { readonly id: string } };
 
-// tslint:disable-next-line:interface-over-type-literal
-export type ast = list<ast_item>;
+// tslint:disable-next-line:max-classes-per-file 
+// tslint:disable-next-line:class-name
+export abstract class ast { protected opaque!: any }; /* simulate opaque types */
 
 // tslint:disable-next-line:interface-over-type-literal
 export type list_item = { readonly children: ast };
@@ -60,7 +59,7 @@ export type table_row = { readonly cells: table_cell[] };
 export type table_cell = 
     { readonly children: ast; readonly variant: "Heading" | "Content" };
 
-export const ast_to_array: (a:ast) => ast_item[] = function (Arg1: any) {
+export const ast_to_array: (ast:ast) => ast_item[] = function (Arg1: any) {
   const result = BBCodeBS.ast_to_array(Arg1);
   return result.map(function _element(ArrayItem: any) { return ArrayItem.TAG===0
     ? {tag:"Text", value:ArrayItem._0}

@@ -61,7 +61,7 @@ type ast_item =
   | YouTube of { id : string }
 [@@genType]
 
-and ast = ast_item list [@@genType]
+and ast = ast_item list [@@genType.opaque]
 
 and list_item = ListItem of { children : ast } [@@genType]
 
@@ -74,7 +74,7 @@ and table_cell =
       }
 [@@genType]
 
-let ast_to_array (a : ast) : ast_item array = Belt.List.toArray a [@@genType]
+let ast_to_array (ast : ast) : ast_item array = Belt.List.toArray ast [@@genType]
 
 let item_from_tag children tag =
   match { tag with name = Js.String.toLowerCase tag.name } with
@@ -277,7 +277,8 @@ module Parse = struct
     >>= fun (tg, ctg, ai) -> if tg.name = ctg then return (item_from_tag ai tg) else mzero
 
   and ast_parser is_open =
-    many' 250
+    many'
+      250
       (text_parser
       <|> bbcode_parser ()
       <|> if is_open then closedtag >>= fun _ -> mzero else lsb_text)

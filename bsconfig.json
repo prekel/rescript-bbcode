@@ -25,7 +25,6 @@
   "gentypeconfig": {
     "language": "typescript",
     "shims": {
-      "ReasonPervasives": "ReasonPervasives"
     },
     "generatedFileExtension": ".gen.tsx",
     "module": "es6",

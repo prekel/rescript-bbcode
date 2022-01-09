@@ -1,5 +1,5 @@
-open Zora
-open BBCode
+(* open Zora
+open BBCode *)
 
 (* let () = zoraBlock "Parse 1" (fun t -> let a = Parse.run "[tag]ars[b]art[/b][/tag]"
    (Parse.pqwf []) in let e = [ Other { children = [ Text "ars"; Bold { children = [ Text
@@ -107,7 +107,7 @@ open BBCode
    One day Shiki's life takes a turn for the worse when, on the way to school, he meets a
    blonde woman and he's overcome with the urge to kill her.|} in let a = parse txt in let
    e = [ Text txt ] in t |. equal a (Some e) "") ;; *)
-
+(* 
 let () =
   zoraBlock "many' test" (fun t ->
       let open Parse in
@@ -130,7 +130,7 @@ let () =
       let a = fix_ast i in
       let e = [ Text "123456" ] in
       t |. equal a e "")
-;;
+;; *)
 
 (* let () =
   zoraBlock "" (fun t ->
